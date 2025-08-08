@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Blue Accent -->
+    <!-- Application Structure Plan: The SPA is structured into a linear, scrollable format with distinct sections: "Introduction," "What is a Slide?", "Basic Content Creation (Text)", "Basic Content Creation (Images)", and "Basic Content Creation (Lists)". A sticky header provides quick navigation links to each section. The "What is a Slide?" section features a simulated slide with a definition. The "Basic Content Creation" sections include a simulated slide area where users can click buttons to dynamically add or modify content (text, placeholder images, list items). This design facilitates a progressive understanding of presentation concepts through direct visual feedback and guided interaction. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Introduction to Presentations. -> Goal: Inform. -> Viz/Method: Concise textual explanation with a presentation icon (Unicode). -> Interaction: None. -> Justification: Simple and direct for an overview. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: What is a Slide? -> Goal: Inform/Explain. -> Viz/Method: A simulated slide (HTML/CSS div) that visually represents a single screen of content. Textual definition. -> Interaction: None. -> Justification: A direct visual representation helps define the core concept. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Basic Content Creation - Text. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated slide content area. -> Interaction: A "Type Text" button that dynamically adds sample text to the simulated slide. -> Justification: Simulates the act of typing on a slide, making it active learning. -> Library/Method: Vanilla JS for DOM manipulation.
+        - Report Info: Basic Content Creation - Images. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated slide content area. -> Interaction: An "Add Image" button that dynamically adds a placeholder image (using placehold.co) to the simulated slide. -> Justification: Shows the visual result of inserting an image. -> Library/Method: Vanilla JS for DOM manipulation.
+        - Report Info: Basic Content Creation - Lists. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated slide content area. -> Interaction: An "Add List Item" button that dynamically adds bullet points to the simulated slide. -> Justification: Visually demonstrates the creation of structured lists. -> Library/Method: Vanilla JS for DOM manipulation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .simulated-slide-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 20px auto;
+            aspect-ratio: 16 / 9; /* Standard slide aspect ratio */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden; /* Ensure content stays within bounds */
+            position: relative;
+        }
+        .slide-content-area {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #334155;
+            font-size: 1.1rem;
+        }
+        .slide-content-area img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 4px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .slide-content-area ul {
+            list-style-type: disc;
+            text-align: left;
+            margin-left: 20px;
+            width: 80%;
+        }
+        .slide-content-area li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-green-800">Presentations Basics</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-fuchsia-600 hover:bg-fuchsia-700 transition-colors">HOME</a>
+                <a href="#intro" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Intro</a>
+                <a href="#what-is-slide" class="nav-link text-stone-600 hover:text-blue-600 font-medium">What is a Slide?</a>
+                <a href="#text-creation" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Text</a>
+                <a href="#image-creation" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Images</a>
+                <a href="#list-creation" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Lists</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-green-800 mb-4">ModernWorld Introduction to Presentations</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Presentations are a powerful way to convey information visually and engage an audience. This guide will introduce you to the fundamental building blocks and how to create basic content.</p>
+            <span class="text-7xl mt-8 block">📈</span>
+        </section>
+
+        <section id="what-is-slide" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">What is a "Slide"?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">In presentation software, a "slide" is a single page or screen that contains text, images, charts, or other multimedia elements. A presentation is a sequence of these slides.</p>
+            </div>
+            
+            <div class="simulated-slide-container">
+                <div class="slide-content-area">
+                    <h4 class="text-2xl font-semibold text-green-800 mb-4">This is a Presentation Slide</h4>
+                    <p class="text-stone-700 max-w-md">Each slide is like a canvas where you arrange your content to tell a story or convey key information to your audience.</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center max-w-2xl mx-auto">
+                <h4 class="text-xl font-semibold text-green-700 mb-3">Purpose of Slides:</h4>
+                <ul class="list-disc list-inside text-stone-700 space-y-2 text-left">
+                    <li>**Visual Aid:** Support your spoken message with visuals.</li>
+                    <li>**Key Points:** Highlight important information concisely.</li>
+                    <li>**Engagement:** Keep the audience interested with dynamic content.</li>
+                    <li>**Structure:** Organize your presentation into logical sections.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="text-creation" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Content Creation: Text</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Text is the foundation of most presentations. You'll use text boxes to add titles, bullet points, and paragraphs to your slides. Click the button below to add text to the simulated slide.</p>
+            </div>
+            
+            <div class="simulated-slide-container">
+                <div id="text-slide-content" class="slide-content-area">
+                    <h4 class="text-2xl font-semibold text-blue-800 mb-4">Slide Title Here</h4>
+                    <p class="text-stone-700" id="text-content-area">Start typing your content...</p>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-4 mt-6">
+                <button id="add-text-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Add More Text</button>
+                <button id="clear-text-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Clear Text</button>
+            </div>
+        </section>
+
+        <section id="image-creation" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Content Creation: Images</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Images can significantly enhance your slides, making them more visually appealing and helping to illustrate points. Click the button to add a sample image to the simulated slide.</p>
+            </div>
+            
+            <div class="simulated-slide-container">
+                <div id="image-slide-content" class="slide-content-area">
+                    <h4 class="text-2xl font-semibold text-green-800 mb-4">Slide with an Image</h4>
+                    <img id="dynamic-image" class="hidden" src="https://placehold.co/400x250/a7d9f7/1e40af?text=Your+Image+Here" alt="Placeholder Image">
+                </div>
+            </div>
+            <div class="flex justify-center space-x-4 mt-6">
+                <button id="add-image-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Add Image</button>
+                <button id="remove-image-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Remove Image</button>
+            </div>
+        </section>
+
+        <section id="list-creation" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Content Creation: Lists</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Lists (bulleted or numbered) are excellent for breaking down complex information into easily digestible points. Click the button to add items to a bulleted list on the simulated slide.</p>
+            </div>
+            
+            <div class="simulated-slide-container">
+                <div id="list-slide-content" class="slide-content-area">
+                    <h4 class="text-2xl font-semibold text-green-800 mb-4">Key Points:</h4>
+                    <ul id="dynamic-list" class="text-stone-700">
+                        <!-- List items will be added here -->
+                    </ul>
+                </div>
+            </div>
+            <div class="flex justify-center space-x-4 mt-6">
+                <button id="add-list-item-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Add List Item</button>
+                <button id="clear-list-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Clear List</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Text Creation Section ---
+            const textContentArea = document.getElementById('text-content-area');
+            const addTextBtn = document.getElementById('add-text-btn');
+            const clearTextBtn = document.getElementById('clear-text-btn');
+
+            let textCounter = 0;
+            const sampleTexts = [
+                "This is the first point of your presentation.",
+                "You can add more details and explanations here.",
+                "Keep your text concise and easy to read for the audience.",
+                "Use bullet points for key takeaways, not full paragraphs."
+            ];
+
+            addTextBtn.addEventListener('click', () => {
+                if (textCounter < sampleTexts.length) {
+                    if (textCounter === 0) {
+                        textContentArea.textContent = sampleTexts[textCounter];
+                    } else {
+                        textContentArea.textContent += "\n\n" + sampleTexts[textCounter];
+                    }
+                    textCounter++;
+                } else {
+                    textContentArea.textContent = "All sample text added. Click 'Clear Text' to reset.";
+                }
+            });
+
+            clearTextBtn.addEventListener('click', () => {
+                textContentArea.textContent = "Start typing your content...";
+                textCounter = 0;
+            });
+
+            // --- Image Creation Section ---
+            const dynamicImage = document.getElementById('dynamic-image');
+            const addImageBtn = document.getElementById('add-image-btn');
+            const removeImageBtn = document.getElementById('remove-image-btn');
+
+            addImageBtn.addEventListener('click', () => {
+                dynamicImage.classList.remove('hidden');
+            });
+
+            removeImageBtn.addEventListener('click', () => {
+                dynamicImage.classList.add('hidden');
+            });
+
+            // --- List Creation Section ---
+            const dynamicList = document.getElementById('dynamic-list');
+            const addListItemBtn = document.getElementById('add-list-item-btn');
+            const clearListBtn = document.getElementById('clear-list-btn');
+
+            let listItemCounter = 0;
+            const sampleListItems = [
+                "Point 1: Introduce your topic clearly.",
+                "Point 2: Provide supporting evidence or examples.",
+                "Point 3: Summarize your key message.",
+                "Point 4: Engage your audience with questions or activities."
+            ];
+
+            addListItemBtn.addEventListener('click', () => {
+                if (listItemCounter < sampleListItems.length) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = sampleListItems[listItemCounter];
+                    dynamicList.appendChild(listItem);
+                    listItemCounter++;
+                } else {
+                    const statusItem = document.createElement('li');
+                    statusItem.textContent = "All sample list items added.";
+                    statusItem.style.color = '#71717a'; /* stone-600 */
+                    dynamicList.appendChild(statusItem);
+                }
+            });
+
+            clearListBtn.addEventListener('click', () => {
+                dynamicList.innerHTML = "";
+                listItemCounter = 0;
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

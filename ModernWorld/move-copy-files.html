@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MordernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Fresh Greens & Earthy Neutrals -->
+    <!-- Application Structure Plan: The SPA is divided into two main sections: "Moving Files" and "Copying Files," accessible via a sticky navigation bar. Each section presents its primary method (Drag & Drop for Move, Copy & Paste for Copy) through a step-by-step interactive module. These modules feature a visual simulation area that animates the file action, paired with dynamically updated textual instructions. A brief explanation of "Drag & Drop with Modifier Key" for copying is included. This design aims to provide clear, actionable insights through direct visual feedback, enhancing user comprehension of these distinct file management operations. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Drag & drop for moving files. -> Goal: Instruct/Demonstrate. -> Viz/Method: HTML/CSS elements representing source/destination folders and a file. JavaScript animates the file moving from source to destination. -> Interaction: "Simulate Move" button triggers the animation and updates accompanying textual steps. -> Justification: Visualizing the drag-and-drop process is highly effective for understanding file relocation. -> Library/Method: Vanilla JS for animation and step management.
+        - Report Info: Copy & paste shortcuts for copying files. -> Goal: Instruct/Demonstrate. -> Viz/Method: HTML/CSS elements for a source file and a destination area. JavaScript visually "duplicates" the file into the destination area. -> Interaction: "Simulate Copy" and "Simulate Paste" buttons trigger the respective actions and update textual steps. -> Justification: Explicitly showing the duplication process clarifies the "copy" concept. -> Library/Method: Vanilla JS for visual updates and step management.
+        - Report Info: Drag & drop with modifier key for copying. -> Goal: Inform/Instruct. -> Viz/Method: Textual explanation with simple Unicode icons for files and the Ctrl/Option key. -> Interaction: None, primarily informational. -> Justification: This is an important alternative method, concisely explained after the primary copy method. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .folder-container {
+            width: 120px;
+            height: 90px;
+            position: relative;
+            background-color: #facc15; /* amber-400 */
+            border-radius: 0 10px 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #78350f; /* amber-900 */
+        }
+        .folder-container::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 0;
+            width: 50%;
+            height: 20px;
+            background-color: #facc15; /* amber-400 */
+            border-radius: 10px 10px 0 0;
+        }
+        .file-icon-draggable {
+            width: 60px;
+            height: 70px;
+            background-color: #d1d5db; /* gray-300 */
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #374151; /* gray-700 */
+            position: absolute;
+            transition: all 0.8s ease-in-out;
+            z-index: 10;
+        }
+        .file-icon-draggable::before {
+            content: '📄';
+            font-size: 2rem;
+            margin-bottom: 3px;
+        }
+        .file-icon-copy {
+            width: 60px;
+            height: 70px;
+            background-color: #d1d5db; /* gray-300 */
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #374151; /* gray-700 */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .file-icon-copy::before {
+            content: '📄';
+            font-size: 2rem;
+            margin-bottom: 3px;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-emerald-800">File Operations</h1>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">HOME</a>
+                    <a href="#move" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Move Files</a>
+                    <a href="#copy" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Copy Files</a>
+                </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-emerald-800 mb-4">MordernWorld Moving and Copying Files</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Learn how to organize your digital content by moving files to new locations or creating duplicates. This guide covers both drag & drop and copy & paste methods.</p>
+        </section>
+
+        <section id="move" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Moving Files: Relocating Content</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Moving a file means relocating it from its original spot to a new destination. The file will no longer exist in the first location. The most common way to move files is using drag & drop.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md relative h-64 justify-center">
+                    <div class="flex space-x-12">
+                        <div class="folder-container">Source</div>
+                        <div class="folder-container">Destination</div>
+                    </div>
+                    <div id="move-file-visual" class="file-icon-draggable top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2">
+                        <span>MyFile.txt</span>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="move-steps-container">
+                        <div id="move-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to move a file?</h4>
+                            <p class="text-stone-700">Click "Simulate Move" to see drag & drop in action.</p>
+                        </div>
+                        <div id="move-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Locate File</h4>
+                            <p class="text-stone-700">Find the file you want to move in its current folder.</p>
+                        </div>
+                        <div id="move-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Drag & Drop</h4>
+                            <p class="text-stone-700">Click and hold the file with your mouse. Drag it to the new folder (destination) and release the mouse button.</p>
+                        </div>
+                        <div id="move-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Result: File Moved</h4>
+                            <p class="text-stone-700">The file is now in the new folder and no longer in its original location.</p>
+                        </div>
+                    </div>
+                    <button id="simulate-move-btn" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Simulate Move</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="copy" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Copying Files: Creating Duplicates</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Copying a file creates an exact duplicate, leaving the original file untouched in its location. This is useful for backups or working with different versions.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md relative h-64 justify-center">
+                    <div class="flex space-x-12">
+                        <div class="folder-container">Original</div>
+                        <div class="folder-container">Duplicate</div>
+                    </div>
+                    <div id="original-file-copy-visual" class="file-icon-draggable top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2">
+                        <span>Doc.pdf</span>
+                    </div>
+                    <div id="copied-file-visual" class="file-icon-copy absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2">
+                        <span>Doc.pdf</span>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="copy-steps-container">
+                        <div id="copy-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to copy a file?</h4>
+                            <p class="text-stone-700">Click "Simulate Copy" to see the process using shortcuts.</p>
+                        </div>
+                        <div id="copy-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Select & Copy</h4>
+                            <p class="text-stone-700">Click the file you want to copy. Press <kbd class="font-mono bg-stone-200 px-1 rounded">Ctrl + C</kbd> (Windows) or <kbd class="font-mono bg-stone-200 px-1 rounded">Cmd + C</kbd> (Mac) to copy it.</p>
+                        </div>
+                        <div id="copy-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Navigate & Paste</h4>
+                            <p class="text-stone-700">Go to the destination folder. Press <kbd class="font-mono bg-stone-200 px-1 rounded">Ctrl + V</kbd> (Windows) or <kbd class="font-mono bg-stone-200 px-1 rounded">Cmd + V</kbd> (Mac) to paste the copy.</p>
+                        </div>
+                        <div id="copy-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Result: File Duplicated</h4>
+                            <p class="text-stone-700">The file now exists in both the original and new locations.</p>
+                        </div>
+                    </div>
+                    <button id="simulate-copy-btn" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Simulate Copy</button>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center bg-stone-100 p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+                <h4 class="text-2xl font-bold text-emerald-700 mb-4">Copying with Drag & Drop (Advanced)</h4>
+                <p class="text-stone-700 mb-4">You can also copy files using drag & drop, but you need to hold down a modifier key:</p>
+                <ul class="list-disc list-inside text-left text-stone-700 space-y-2 max-w-xl mx-auto">
+                    <li>**Windows:** Hold down the <kbd class="font-mono bg-stone-200 px-1 rounded">Ctrl</kbd> key while dragging the file to its new location.</li>
+                    <li>**macOS:** Hold down the <kbd class="font-mono bg-stone-200 px-1 rounded">Option</kbd> key while dragging the file to its new location.</li>
+                </ul>
+                <p class="text-stone-700 mt-4">This method creates a copy, leaving the original file intact, just like Copy & Paste.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generic step navigator function
+            function setupStepNavigator(sectionId, totalSteps, visualCallback) {
+                let currentStep = 0;
+                const stepsContainer = document.getElementById(`${sectionId}-steps-container`);
+                const nextButton = document.getElementById(`simulate-${sectionId}-btn`);
+                const stepContents = [];
+
+                for (let i = 0; i <= totalSteps; i++) {
+                    const step = document.getElementById(`${sectionId}-step-${i}`);
+                    if (step) {
+                        stepContents.push(step);
+                    }
+                }
+
+                function showStep(stepIndex) {
+                    stepContents.forEach((step, index) => {
+                        step.classList.remove('active');
+                        if (index === stepIndex) {
+                            step.classList.add('active');
+                        }
+                    });
+                    if (visualCallback) {
+                        visualCallback(stepIndex);
+                    }
+                    nextButton.textContent = (stepIndex === totalSteps) ? 'Restart Simulation' : 'Next Step';
+                }
+
+                nextButton.addEventListener('click', function () {
+                    currentStep++;
+                    if (currentStep > totalSteps) {
+                        currentStep = 0; // Loop back to start
+                    }
+                    showStep(currentStep);
+                });
+
+                showStep(currentStep); // Initialize first step
+            }
+
+            // --- Moving Files Section ---
+            const moveFileVisual = document.getElementById('move-file-visual');
+            setupStepNavigator('move', 3, (step) => {
+                if (step === 0) {
+                    moveFileVisual.style.left = '25%';
+                    moveFileVisual.style.opacity = '1';
+                } else if (step === 2) {
+                    moveFileVisual.style.left = '75%';
+                } else if (step === 3) {
+                    moveFileVisual.style.opacity = '0'; // File disappears from original
+                }
+            });
+
+            // --- Copying Files Section ---
+            const originalFileCopyVisual = document.getElementById('original-file-copy-visual');
+            const copiedFileVisual = document.getElementById('copied-file-visual');
+            setupStepNavigator('copy', 3, (step) => {
+                if (step === 0) {
+                    originalFileCopyVisual.style.opacity = '1';
+                    copiedFileVisual.style.opacity = '0';
+                } else if (step === 1) {
+                    // Simulate copy action, original remains visible
+                    originalFileCopyVisual.style.opacity = '1';
+                    copiedFileVisual.style.opacity = '0'; // Still hidden
+                } else if (step === 2) {
+                    // Simulate paste action, copy appears
+                    copiedFileVisual.style.opacity = '1';
+                } else if (step === 3) {
+                    // Both visible
+                    originalFileCopyVisual.style.opacity = '1';
+                    copiedFileVisual.style.opacity = '1';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+      <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

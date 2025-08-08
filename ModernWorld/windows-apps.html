@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MordernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA uses a single-page, scroll-based navigation structure with a sticky header. This allows users to see the overall structure of the content (Windows, Applications, Relationship) at a glance and navigate easily. The core of the app is its interactivity: the 'Windows' section features a clickable diagram to actively teach components, while the 'Applications' section uses a card-based grid to make exploring examples more engaging. This structure was chosen to transform a linear document into an exploratory learning experience, promoting user interaction and better comprehension over passive reading. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Components of a window. -> Goal: Inform/Teach. -> Viz/Method: An interactive diagram built with HTML/CSS. -> Interaction: Users click on labeled parts of the diagram (e.g., Title Bar, Close Button). A dedicated info panel updates with a description. -> Justification: This directly connects the visual element to its function, which is more effective for learning than a list. -> Library/Method: Vanilla JS.
+        - Report Info: Examples of applications. -> Goal: Organize/Inform. -> Viz/Method: A responsive grid of cards. -> Interaction: Cards have a subtle hover effect. Each card represents a category and lists examples. -> Justification: This visually groups related items, making the long list of examples less daunting and easier to parse. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Relationship between windows and apps. -> Goal: Explain a process. -> Viz/Method: A simple, clear flowchart created with HTML/CSS. -> Interaction: None, it's a static visual aid. -> Justification: A visual flowchart simplifies the abstract relationship and makes the process flow easy to follow. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f6; /* Warm neutral background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .interactive-diagram-part {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .interactive-diagram-part:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        .info-panel-item.active {
+            display: block;
+        }
+        .info-panel-item {
+            display: none;
+        }
+        .highlight-animation {
+            animation: pulse 1.5s ease-out;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(13, 148, 136, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-teal-800">Computing Fundamentals</h1>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">HOME</a>
+                    <a href="#windows" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Windows</a>
+                    <a href="#applications" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Applications</a>
+                    <a href="#relationship" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Relationship</a>
+                </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-teal-800 mb-4">ModernWorld Windows & Applications</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Welcome! This guide breaks down the core concepts of how you interact with software. Explore the sections below to learn what windows and applications are, and how they work together.</p>
+        </section>
+
+        <section id="windows" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">What is a "Window"?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A window is a rectangular area on your screen that displays an application. Think of it as your workspace for a specific task. Click on the different parts of the diagram below to learn about each component.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                <div class="relative">
+                    <div id="window-diagram" class="bg-white rounded-lg shadow-xl border border-stone-200 p-2">
+                        <!-- Title Bar -->
+                        <div data-target="info-titlebar" class="interactive-diagram-part bg-stone-200 rounded-t-md p-2 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">📄 Document - Word Processor</span>
+                            <div class="flex space-x-2">
+                                <div data-target="info-controls" class="interactive-diagram-part w-4 h-4 bg-yellow-400 rounded-full"></div>
+                                <div data-target="info-controls" class="interactive-diagram-part w-4 h-4 bg-green-400 rounded-full"></div>
+                                <div data-target="info-controls" class="interactive-diagram-part w-4 h-4 bg-red-400 rounded-full"></div>
+                            </div>
+                        </div>
+                        <!-- Menu Bar -->
+                        <div data-target="info-menubar" class="interactive-diagram-part bg-stone-100 p-1 text-xs text-stone-600">File Edit View Insert Format</div>
+                        <!-- Content Area -->
+                        <div data-target="info-content" class="interactive-diagram-part h-64 bg-white relative p-4">
+                            <p class="text-stone-700">This is the content area...</p>
+                            <!-- Scroll Bar -->
+                            <div data-target="info-scrollbar" class="interactive-diagram-part absolute top-0 right-0 h-full w-3 bg-stone-200 rounded-r-md">
+                                <div class="bg-stone-400 h-1/3 w-full rounded-md"></div>
+                            </div>
+                        </div>
+                         <!-- Border/Resize Handle -->
+                        <div data-target="info-border" class="interactive-diagram-part absolute -bottom-1 -right-1 w-4 h-4 bg-stone-300" style="clip-path: polygon(100% 0, 0 100%, 100% 100%);"></div>
+                    </div>
+                </div>
+
+                <div id="info-panel" class="bg-white p-6 rounded-lg shadow-lg min-h-[300px]">
+                    <div id="info-default" class="info-panel-item active">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Interactive Diagram</h4>
+                        <p class="text-stone-700">Click on any labeled part of the window diagram to the left to see a detailed explanation of its function here.</p>
+                    </div>
+                    <div id="info-titlebar" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Title Bar</h4>
+                        <p class="text-stone-700">Located at the top, the title bar displays the application and document name. You can also click and drag it to move the window around your screen.</p>
+                    </div>
+                    <div id="info-controls" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Control Buttons</h4>
+                        <p class="text-stone-700">These buttons manage the window's state. Typically, they allow you to Minimize (hide), Maximize (fill screen), and Close (exit) the application or document.</p>
+                    </div>
+                    <div id="info-menubar" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Menu Bar / Ribbon</h4>
+                        <p class="text-stone-700">This area contains commands and options for the application, such as 'File', 'Edit', and 'View'. It gives you access to all the application's features.</p>
+                    </div>
+                    <div id="info-content" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Content Area</h4>
+                        <p class="text-stone-700">This is the main workspace of the window where you interact with the application's content, whether it's typing text, editing an image, or viewing a webpage.</p>
+                    </div>
+                    <div id="info-scrollbar" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Scroll Bars</h4>
+                        <p class="text-stone-700">When content doesn't fit within the window, scroll bars appear. You can drag them to navigate and view the hidden parts of the content area.</p>
+                    </div>
+                    <div id="info-border" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">Borders & Resize Handles</h4>
+                        <p class="text-stone-700">The edges and corners of the window can be dragged with your mouse to change its size and shape, allowing you to customize your workspace.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="applications" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">What is an "Application"?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">An application (or 'app') is a software program designed to help you perform a specific task. Below are common categories of applications you might use every day.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">📝 Productivity</h4>
+                    <p class="text-stone-600">Tools for creating documents, analyzing data, and making presentations. <br><i>Examples: Word, Excel, PowerPoint.</i></p>
+                </div>
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">🌐 Web Browsers</h4>
+                    <p class="text-stone-600">Your gateway to the internet, used for visiting websites and web apps. <br><i>Examples: Chrome, Firefox, Safari.</i></p>
+                </div>
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">🎨 Graphics & Design</h4>
+                    <p class="text-stone-600">Software for creating and editing images, illustrations, and layouts. <br><i>Examples: Photoshop, GIMP, Canva.</i></p>
+                </div>
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">💬 Communication</h4>
+                    <p class="text-stone-600">Apps for messaging, video calls, and collaborating with others. <br><i>Examples: Zoom, Microsoft Teams, Discord.</i></p>
+                </div>
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">🎬 Media Players</h4>
+                    <p class="text-stone-600">Used for playing audio files like music and podcasts, or video files like movies. <br><i>Examples: VLC, Spotify, Apple Music.</i></p>
+                </div>
+                <div class="bg-stone-50 p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">🎮 Games & Entertainment</h4>
+                    <p class="text-stone-600">Software designed for leisure and entertainment, from simple puzzles to complex worlds. <br><i>Varies widely.</i></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="relationship" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">How They Work Together</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Windows and applications have a symbiotic relationship. The application is the 'engine' that does the work, and the window is the 'dashboard' you use to control it.</p>
+            </div>
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-xl">
+                <h4 class="text-2xl font-semibold text-teal-800 mb-6 text-center">The Interaction Flow</h4>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                    <div class="p-4 bg-teal-50 rounded-lg">
+                        <div class="text-4xl">🧑‍💻</div>
+                        <div class="font-semibold mt-2">1. User</div>
+                        <p class="text-sm text-stone-600">You launch an app.</p>
+                    </div>
+                    <div class="text-2xl text-teal-400 font-bold">→</div>
+                    <div class="p-4 bg-teal-50 rounded-lg">
+                        <div class="text-4xl">⚙️</div>
+                        <div class="font-semibold mt-2">2. Application</div>
+                        <p class="text-sm text-stone-600">The app starts.</p>
+                    </div>
+                    <div class="text-2xl text-teal-400 font-bold">→</div>
+                    <div class="p-4 bg-teal-50 rounded-lg">
+                        <div class="text-4xl">🖼️</div>
+                        <div class="font-semibold mt-2">3. Window</div>
+                        <p class="text-sm text-stone-600">It creates a window.</p>
+                    </div>
+                     <div class="text-2xl text-teal-400 font-bold">→</div>
+                    <div class="p-4 bg-teal-50 rounded-lg">
+                        <div class="text-4xl">🖱️</div>
+                        <div class="font-semibold mt-2">4. Interaction</div>
+                        <p class="text-sm text-stone-600">You work in the window.</p>
+                    </div>
+                </div>
+                <div class="mt-10 border-t pt-6">
+                    <h4 class="text-xl font-semibold text-teal-800">Key Takeaways:</h4>
+                    <ul class="mt-4 space-y-3 list-disc list-inside text-stone-700">
+                        <li><b>Interface:</b> Applications use windows to show you their interface and content.</li>
+                        <li><b>Interaction:</b> You use your mouse and keyboard to interact with the application *inside* its window.</li>
+                        <li><b>Organization:</b> A single application can open many windows (e.g., multiple documents), helping you organize your work.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const diagramParts = document.querySelectorAll('.interactive-diagram-part');
+            const infoPanel = document.getElementById('info-panel');
+            const infoItems = document.querySelectorAll('.info-panel-item');
+            const defaultInfo = document.getElementById('info-default');
+
+            diagramParts.forEach(part => {
+                part.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    const targetId = this.dataset.target;
+                    
+                    infoItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    const targetInfo = document.getElementById(targetId);
+                    if (targetInfo) {
+                        targetInfo.classList.add('active');
+                    } else {
+                        defaultInfo.classList.add('active');
+                    }
+
+                    infoPanel.classList.remove('highlight-animation');
+                    void infoPanel.offsetWidth; 
+                    infoPanel.classList.add('highlight-animation');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+      <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

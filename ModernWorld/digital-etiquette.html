@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with green Accent -->
+    <!-- Application Structure Plan: The SPA is structured into distinct, scrollable sections: "Introduction," "Being Respectful Online," "Basic Copyright Awareness," and "Key Takeaways." A sticky navigation bar allows quick jumps between these topics. The "Being Respectful Online" section uses expandable cards for different aspects of online respect (e.g., "Tone & Language," "Empathy"). The "Basic Copyright Awareness" section features a simulated "post" scenario where users choose to "Use Without Permission" or "Seek Permission/Credit," revealing different outcomes. This design prioritizes active learning and visual reinforcement to make abstract concepts tangible and actionable. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Introduction to digital etiquette. -> Goal: Inform. -> Viz/Method: Concise textual explanation with a handshake icon (Unicode). -> Interaction: None. -> Justification: Simple and direct for an overview. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Guidelines for respectful online behavior. -> Goal: Educate/Advise. -> Viz/Method: Expandable sections (HTML/CSS toggles) for different etiquette rules (e.g., "Think Before You Post," "Be Empathetic"). Each section reveals specific advice. -> Interaction: Clickable headers toggle content visibility. -> Justification: Allows users to control information density and focus on specific guidelines. -> Library/Method: HTML/CSS with Tailwind, Vanilla JS for toggles.
+        - Report Info: Basic copyright awareness. -> Goal: Inform/Educate. -> Viz/Method: A simulated content post (HTML/CSS) with a placeholder image and text. Buttons for "Use Without Permission" and "Seek Permission/Credit" trigger status messages (e.g., "Violation!" vs. "Good Citizen!"). -> Interaction: Buttons trigger visual status updates, demonstrating consequences/best practices. -> Justification: Provides a direct, interactive way to understand the implications of copyright actions in a relatable scenario. -> Library/Method: Vanilla JS.
+        - Report Info: General best practices for digital etiquette and copyright. -> Goal: Advise. -> Viz/Method: A clear, bulleted list of actionable tips. -> Interaction: None. -> Justification: A concise list is effective for conveying practical advice. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .toggle-header {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #f0f9ff; /* green-50 */
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #1e40af; /* green-800 */
+            transition: background-color 0.2s ease;
+        }
+        .toggle-header:hover {
+            background-color: #e0f2fe; /* green-100 */
+        }
+        .toggle-content {
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e0f2fe;
+            border-top: none;
+            display: none;
+        }
+        .toggle-content.active {
+            display: block;
+        }
+        .copyright-sim-post {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .copyright-image-placeholder {
+            width: 100%;
+            height: 150px;
+            background-color: #bfdbfe; /* green-200 */
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e40af; /* green-800 */
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .copyright-status-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        .copyright-status-message.success {
+            background-color: #dcfce7; /* green-100 */
+            color: #16a34a; /* green-600 */
+        }
+        .copyright-status-message.warning {
+            background-color: #fee2e2; /* red-100 */
+            color: #dc2626; /* red-600 */
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-green-700 hover:bg-green-800 transition-colors">HOME</a>
+                <h1 class="text-xl font-bold text-green-800 ml-2">Digital Etiquette</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-green-600 font-medium">Intro</a>
+                <a href="#respectful-online" class="nav-link text-stone-600 hover:text-green-600 font-medium">Respect Online</a>
+                <a href="#copyright" class="nav-link text-stone-600 hover:text-green-600 font-medium">Copyright</a>
+                <a href="#takeaways" class="nav-link text-stone-600 hover:text-green-600 font-medium">Tips</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-green-800 mb-4">ModernWorld Digital Etiquette: Navigating the Online World Responsibly</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Just like in real life, there are unwritten rules for polite and responsible behavior online. Understanding digital etiquette and basic copyright is essential for a positive digital experience.</p>
+            <span class="text-7xl mt-8 block">🤝</span>
+        </section>
+
+        <section id="respectful-online" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Being Respectful Online (Netiquette)</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">"Netiquette" refers to the rules of polite behavior when communicating online. Treat others as you would in person.</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-4">
+                    <div class="toggle-header" data-toggle="tone-language">
+                        <span>Tone and Language</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="tone-language" class="toggle-content">
+                        <p class="text-stone-700 mb-2">Since body language and tone of voice are absent online, it's easy for misunderstandings to occur. Be mindful of your written words:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Avoid ALL CAPS:** This is often perceived as shouting.</li>
+                            <li>**Use Emojis Sparingly:** They can help convey emotion but don't overuse them.</li>
+                            <li>**Be Clear and Concise:** Ambiguity can lead to misinterpretation.</li>
+                            <li>**Proofread:** Check for typos or grammatical errors that might change your meaning.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="toggle-header" data-toggle="empathy-privacy">
+                        <span>Empathy and Privacy of Others</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="empathy-privacy" class="toggle-content">
+                        <p class="text-stone-700 mb-2">Remember that there's a real person behind every screen. Respect their feelings and privacy:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Think Before You Post:** Would you say this to someone's face? Could it hurt or offend someone?</li>
+                            <li>**Respect Opinions:** You don't have to agree, but engage respectfully, even in disagreement.</li>
+                            <li>**Don't Share Private Information:** Never share someone else's personal details (phone number, address, private photos) without their explicit permission.</li>
+                            <li>**Avoid Cyberbullying:** Do not engage in harassment, intimidation, or spreading rumors online.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="toggle-header" data-toggle="information-sharing">
+                        <span>Information Sharing and Credibility</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="information-sharing" class="toggle-content">
+                        <p class="text-stone-700 mb-2">The internet is full of information, but not all of it is accurate. Be a responsible digital citizen:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Verify Information:** Before sharing news or facts, check their credibility. Avoid spreading misinformation.</li>
+                            <li>**Cite Sources:** If you're sharing information that isn't yours, give credit to the original creator.</li>
+                            <li>**Avoid Trolling:** Don't intentionally provoke arguments or upset others for entertainment.</li>
+                            <li>**Be Mindful of Audience:** Adjust your communication style based on who you're talking to (e.g., formal vs. informal settings).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="copyright" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Copyright Awareness</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Copyright protects original creative works. When you're online, assume that most content (images, text, music, videos) is copyrighted unless stated otherwise. Using someone else's work without permission can have legal consequences.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="copyright-sim-post">
+                    <h4 class="text-xl font-semibold text-green-800 mb-4 text-center">Simulated Online Post</h4>
+                    <div class="copyright-image-placeholder">
+                        Original Photo (©)
+                    </div>
+                    <p class="text-stone-700 text-sm mb-4">"Just found this amazing photo online! Perfect for my blog post about travel. I'll just copy and paste it."</p>
+                    <div class="flex justify-center space-x-4">
+                        <button id="use-without-permission-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Use Without Permission</button>
+                        <button id="seek-permission-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Seek Permission / Credit</button>
+                    </div>
+                    <div id="copyright-status" class="copyright-status-message"></div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px]">
+                    <h4 class="text-xl font-semibold text-green-800 mb-3">Understanding Copyright:</h4>
+                    <ul class="list-disc list-inside text-stone-700 space-y-2">
+                        <li>**What it is:** Legal protection for original works (photos, articles, music, videos, software).</li>
+                        <li>**Automatic:** Copyright exists from the moment a work is created.</li>
+                        <li>**Rights:** Gives the creator exclusive rights to reproduce, distribute, perform, display, or adapt their work.</li>
+                        <li>**Online Content:** Most content you find online is copyrighted.</li>
+                        <li>**Fair Use:** There are exceptions (like for criticism, commentary, news reporting, teaching), but "Fair Use" is complex and varies by region.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="takeaways" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Key Takeaways for Digital Etiquette & Copyright</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Be a responsible, respectful, and ethical digital citizen.</p>
+            </div>
+            <div class="bg-stone-100 p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+                <ul class="list-disc list-inside text-stone-700 space-y-4">
+                    <li>
+                        <span class="font-semibold text-green-800">Be Kind and Respectful:</span> Treat others online as you would in person.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Protect Privacy:</span> Yours and others'. Don't share private information without consent.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Think Before You Post:</span> Consider the impact of your words and content.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Respect Copyright:</span> Always assume content is copyrighted. Seek permission or use royalty-free/public domain resources.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Cite Your Sources:</span> Give credit where credit is due, especially when using others' work.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Verify Information:</span> Don't spread misinformation.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Toggle Content Sections (Netiquette) ---
+            document.querySelectorAll('.toggle-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const targetId = this.dataset.toggle;
+                    const content = document.getElementById(targetId);
+                    const arrow = this.querySelector('span:last-child');
+
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        arrow.textContent = '▼';
+                    } else {
+                        content.classList.add('active');
+                        arrow.textContent = '▲';
+                    }
+                });
+            });
+
+            // --- Copyright Simulation ---
+            const useWithoutPermissionBtn = document.getElementById('use-without-permission-btn');
+            const seekPermissionBtn = document.getElementById('seek-permission-btn');
+            const copyrightStatus = document.getElementById('copyright-status');
+
+            function resetCopyrightStatus() {
+                copyrightStatus.textContent = '';
+                copyrightStatus.classList.remove('success', 'warning');
+                copyrightStatus.style.display = 'none';
+            }
+
+            useWithoutPermissionBtn.addEventListener('click', () => {
+                resetCopyrightStatus();
+                copyrightStatus.textContent = '⚠️ Copyright Violation! Using content without permission can lead to legal issues.';
+                copyrightStatus.classList.add('warning');
+                copyrightStatus.style.display = 'block';
+            });
+
+            seekPermissionBtn.addEventListener('click', () => {
+                resetCopyrightStatus();
+                copyrightStatus.textContent = '✅ Good Digital Citizen! Always seek permission or use royalty-free content.';
+                copyrightStatus.classList.add('success');
+                copyrightStatus.style.display = 'block';
+            });
+
+            resetCopyrightStatus(); // Initialize status
+        });
+    </script>
+</body>
+</html>
+
+
+
+ <footer 
+ class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

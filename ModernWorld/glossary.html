@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is structured with a prominent header and a main content area for the glossary. The glossary itself is designed for easy navigation and search: a search bar for keyword filtering and a set of category buttons for thematic filtering. The terms are presented as a scrollable list of cards. This architecture prioritizes quick lookup and organized browsing, making a large dataset of terms easily digestible and explorable for the user. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Computer terms and definitions. -> Goal: Inform, Organize, Enable Quick Lookup. -> Viz/Method: A dynamic list of term cards. Each card displays a term and its definition. -> Interaction: 
+            - **Search Bar:** Typing filters the visible cards by matching text in term or definition.
+            - **Category Buttons:** Clicking a button filters cards to show only those belonging to the selected category.
+        - Justification: This interactive approach allows users to efficiently find specific terms or explore related concepts, which is far more effective than a static, long list.
+        - Library/Method: Vanilla JS for filtering logic, HTML/CSS with Tailwind for layout and styling.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .filter-button {
+            background-color: #e0f2fe; /* blue-50 */
+            color: #1e40af; /* blue-800 */
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+        }
+        .filter-button:hover {
+            background-color: #bfdbfe; /* blue-200 */
+            transform: translateY(-1px);
+        }
+        .filter-button.active {
+            background-color: #0d9488; /* teal-600 */
+            color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .glossary-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 15px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .glossary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-teal-800">ModernWorld Computer Glossary</h1>
+            <div class="hidden md:flex space-x-4 items-center">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-colors">HOME</a>
+                <a href="#intro" class="nav-link text-stone-600 hover:text-teal-600 font-medium">About</a>
+                <a href="#glossary" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Glossary</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-6xl font-bold text-teal-800 mb-4">ModernWorld Computer Terminology Glossary</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">This glossary provides clear, concise definitions for common computer and internet terms. Use the search bar or category filters to quickly find what you're looking for.</p>
+        </section>
+
+        <section id="glossary" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-bold text-teal-700">Explore Terms</h3>
+            </div>
+
+            <div class="mb-8 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <input type="text" id="search-input" placeholder="Search terms..." class="p-3 border border-stone-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 w-full sm:max-w-md">
+            </div>
+
+            <div class="mb-8 flex flex-wrap justify-center gap-2">
+                <button class="filter-button active" data-category="all">All</button>
+                <button class="filter-button" data-category="hardware">Hardware</button>
+                <button class="filter-button" data-category="software">Software</button>
+                <button class="filter-button" data-category="internet">Internet & Web</button>
+                <button class="filter-button" data-category="security">Security</button>
+                <button class="filter-button" data-category="file_management">File Management</button>
+                <button class="filter-button" data-category="communication">Communication</button>
+                <button class="filter-button" data-category="applications">Applications</button>
+            </div>
+
+            <div id="glossary-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Glossary terms will be dynamically loaded here -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search-input');
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const glossaryList = document.getElementById('glossary-list');
+
+            const terms = [
+                {
+                    term: "CPU (Central Processing Unit)",
+                    definition: "The 'brain' of the computer, responsible for executing instructions and performing calculations.",
+                    category: "hardware"
+                },
+                {
+                    term: "RAM (Random Access Memory)",
+                    definition: "Temporary storage that the CPU uses to hold data and program instructions that are currently being used. Volatile memory.",
+                    category: "hardware"
+                },
+                {
+                    term: "Hard Drive (HDD/SSD)",
+                    definition: "Long-term storage for files, operating systems, and applications. HDDs use spinning platters, while SSDs use flash memory.",
+                    category: "hardware"
+                },
+                {
+                    term: "Operating System (OS)",
+                    definition: "Software that manages computer hardware and software resources and provides common services for computer programs (e.g., Windows, macOS, Linux).",
+                    category: "software"
+                },
+                {
+                    term: "Application (App)",
+                    definition: "A software program designed to perform a specific function for the user (e.g., web browser, word processor, game).",
+                    category: "software"
+                },
+                {
+                    term: "Software",
+                    definition: "The programs and other operating information used by a computer.",
+                    category: "software"
+                },
+                {
+                    term: "Internet",
+                    definition: "A global computer network providing a variety of information and communication facilities, consisting of interconnected networks using standardized communication protocols.",
+                    category: "internet"
+                },
+                {
+                    term: "Web Browser",
+                    definition: "A software application for retrieving, presenting, and traversing information resources on the World Wide Web (e.g., Chrome, Firefox, Edge).",
+                    category: "internet"
+                },
+                {
+                    term: "URL (Uniform Resource Locator)",
+                    definition: "The address of a given unique resource on the World Wide Web, specifying its location on a computer network and a mechanism for retrieving it.",
+                    category: "internet"
+                },
+                {
+                    term: "Wi-Fi",
+                    definition: "A technology that allows electronic devices to connect to a computer network, including the Internet, using radio waves.",
+                    category: "internet"
+                },
+                {
+                    term: "Virus",
+                    definition: "A type of malicious software that attaches itself to another program and, when that program is run, replicates itself by modifying other computer programs and inserting its own code.",
+                    category: "security"
+                },
+                {
+                    term: "Malware",
+                    definition: "A general term for any software designed to intentionally cause damage to a computer, server, client, or computer network, or to steal data.",
+                    category: "security"
+                },
+                {
+                    term: "Phishing",
+                    definition: "A cyberattack that uses deceptive emails, websites, or messages to trick individuals into revealing sensitive information like usernames, passwords, and credit card details.",
+                    category: "security"
+                },
+                {
+                    term: "Antivirus Software",
+                    definition: "Software designed to detect, prevent, and remove malicious software like viruses, worms, and Trojans.",
+                    category: "security"
+                },
+                {
+                    term: "Firewall",
+                    definition: "A network security system that monitors and controls incoming and outgoing network traffic based on predetermined security rules.",
+                    category: "security"
+                },
+                {
+                    term: "Password",
+                    definition: "A secret word or phrase used to gain access to a computer system or service.",
+                    category: "security"
+                },
+                {
+                    term: "Encryption",
+                    definition: "The process of converting information or data into a code, especially to prevent unauthorized access.",
+                    category: "security"
+                },
+                {
+                    term: "File",
+                    definition: "A collection of data or information stored on a computer under a single name. The basic unit of storage.",
+                    category: "file_management"
+                },
+                {
+                    term: "Folder",
+                    definition: "A digital container used to organize and store files and other folders on a computer. Also known as a directory.",
+                    category: "file_management"
+                },
+                {
+                    term: "Recycle Bin / Trash",
+                    definition: "A temporary storage area for deleted files and folders, allowing them to be recovered before permanent deletion.",
+                    category: "file_management"
+                },
+                {
+                    term: "File Extension",
+                    definition: "A suffix at the end of a file name (e.g., .docx, .jpg) that indicates the file's type or format.",
+                    category: "file_management"
+                },
+                {
+                    term: "Email (Electronic Mail)",
+                    definition: "A method of exchanging digital messages over the Internet, allowing instant communication.",
+                    category: "communication"
+                },
+                {
+                    term: "Spam",
+                    definition: "Unsolicited, unwanted, or junk email messages, often commercial in nature or malicious.",
+                    category: "communication"
+                },
+                {
+                    term: "Social Media",
+                    definition: "Interactive computer-mediated technologies that facilitate the creation and sharing of information, ideas, career interests, and other forms of expression via virtual communities and networks.",
+                    category: "communication"
+                },
+                {
+                    term: "Word Processor",
+                    definition: "An application used for creating, editing, formatting, and printing text documents (e.g., Microsoft Word, Google Docs).",
+                    category: "applications"
+                },
+                {
+                    term: "Spreadsheet",
+                    definition: "An application that organizes data in rows and columns, used for calculations, analysis, and data management (e.g., Microsoft Excel, Google Sheets).",
+                    category: "applications"
+                },
+                {
+                    term: "Presentation Software",
+                    definition: "An application used to create slideshows for presentations, combining text, images, charts, and multimedia (e.g., Microsoft PowerPoint, Google Slides).",
+                    category: "applications"
+                },
+                {
+                    term: "Operating System (OS)",
+                    definition: "The core software that manages computer hardware and software resources, providing common services for computer programs (e.g., Windows, macOS, Linux).",
+                    category: "software"
+                }
+            ];
+
+            let currentCategory = "all";
+            let searchTerm = "";
+
+            function renderGlossary() {
+                glossaryList.innerHTML = ''; // Clear current list
+
+                const filteredTerms = terms.filter(item => {
+                    const matchesCategory = currentCategory === "all" || item.category === currentCategory;
+                    const matchesSearch = item.term.toLowerCase().includes(searchTerm) || item.definition.toLowerCase().includes(searchTerm);
+                    return matchesCategory && matchesSearch;
+                });
+
+                if (filteredTerms.length === 0) {
+                    glossaryList.innerHTML = '<p class="col-span-full text-center text-stone-600">No terms found matching your criteria.</p>';
+                    return;
+                }
+
+                filteredTerms.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'glossary-card';
+                    card.innerHTML = `
+                        <h4 class="text-xl font-semibold text-teal-800 mb-2">${item.term}</h4>
+                        <p class="text-stone-700">${item.definition}</p>
+                    `;
+                    glossaryList.appendChild(card);
+                });
+            }
+
+            // Search input event listener
+            searchInput.addEventListener('input', (e) => {
+                searchTerm = e.target.value.toLowerCase().trim();
+                renderGlossary();
+            });
+
+            // Filter buttons event listeners
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    currentCategory = button.dataset.category;
+                    renderGlossary();
+                });
+            });
+
+            // Initial render
+            renderGlossary();
+        });
+    </script>
+
+     <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Blue Accent -->
+    <!-- Application Structure Plan: The SPA is structured into a linear, scrollable format with distinct sections: "Introduction," "Opening Images," "Basic Rotation," and "Basic Cropping." A sticky header provides quick navigation links to each section. Each editing section features a simulated image viewing area with interactive buttons that trigger visual changes on a placeholder image (e.g., rotation, cropping overlay). This design facilitates a progressive understanding of photo editing concepts through direct visual feedback and guided interaction. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Introduction to photo viewing/editing. -> Goal: Inform. -> Viz/Method: Concise textual explanation with a camera icon (Unicode). -> Interaction: None. -> Justification: Simple and direct for an overview. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Opening images. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated "Open File" dialog (HTML/CSS) with a mock image file. A "viewing area" will display a placeholder image after "opening." -> Interaction: A "Simulate Open" button triggers the "opening" process, making the placeholder image visible. -> Justification: Mimics the real UI flow, making the abstract action concrete. -> Library/Method: Vanilla JS for button clicks and DOM manipulation.
+        - Report Info: Basic rotation. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated image viewing area with a placeholder image. "Rotate Left" and "Rotate Right" buttons. -> Interaction: Clicking buttons applies CSS `transform: rotate()` to the image. A status message updates. -> Justification: Direct visual feedback of the rotation action is key to understanding. -> Library/Method: Vanilla JS for click events and CSS style manipulation.
+        - Report Info: Basic cropping. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated image viewing area with a placeholder image. A visual "cropping overlay" (HTML/CSS div with borders) appears. "Simulate Crop" and "Reset" buttons. -> Interaction: "Simulate Crop" button toggles the overlay. "Apply Crop" shows a status message. -> Justification: Visually demonstrates the selection area and the *concept* of applying a crop. -> Library/Method: Vanilla JS for toggling CSS classes/styles.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .simulated-viewer-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+            min-height: 250px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .simulated-image {
+            max-width: 100%;
+            max-height: 200px; /* Constrain image height */
+            object-fit: contain;
+            border-radius: 4px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .cropping-overlay {
+            position: absolute;
+            border: 2px dashed #1e40af; /* blue-800 */
+            top: 20%;
+            left: 20%;
+            width: 60%;
+            height: 60%;
+            pointer-events: none; /* Allow clicks to pass through */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .cropping-overlay.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-green-800">Photo Essentials</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-pink-600 hover:bg-pink-700 transition-colors">HOME</a>
+                <a href="#intro" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Intro</a>
+                <a href="#open-image" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Open Image</a>
+                <a href="#rotate-image" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Rotate</a>
+                <a href="#crop-image" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Crop</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-green-800 mb-4">ModernWorld Photo Viewing & Basic Editing</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Learn how to open, view, and perform simple edits like rotation and cropping on your digital photos using common software.</p>
+            <span class="text-7xl mt-8 block">📸</span>
+        </section>
+
+        <section id="open-image" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Opening Images</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Before you can view or edit a photo, you need to open it in an image viewer or editor. This is usually done by selecting the file.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="simulated-viewer-container">
+                    <img id="opened-image" class="simulated-image hidden" src="https://placehold.co/400x250/bfdbfe/1e40af?text=Your+Photo+Here" alt="Simulated opened photo">
+                    <p id="open-status" class="text-stone-600 mt-4">No image opened yet.</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="open-steps-container">
+                        <div id="open-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-green-800 mb-2">Ready to open a photo?</h4>
+                            <p class="text-stone-700">Click "Simulate Open" to see how it works.</p>
+                        </div>
+                        <div id="open-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-green-800 mb-2">Step 1: Locate Image File</h4>
+                            <p class="text-stone-700">Find the image file (e.g., .jpg, .png) on your computer, usually in your "Pictures" folder.</p>
+                        </div>
+                        <div id="open-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-green-800 mb-2">Step 2: Double-Click or Open With</h4>
+                            <p class="text-stone-700">Double-click the image file. It will typically open in your default photo viewer. Or, right-click and choose "Open with..." to select a specific program.</p>
+                        </div>
+                        <div id="open-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-green-800 mb-2">Result: Image Displayed</h4>
+                            <p class="text-stone-700">The image is now visible in your photo viewer or editing software, ready for viewing or editing.</p>
+                        </div>
+                    </div>
+                    <button id="next-open-step" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">Simulate Open</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="rotate-image" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Rotation</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Sometimes photos are sideways or upside down. Rotation allows you to correct their orientation, usually in 90-degree increments. Click the buttons to rotate the image below.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="simulated-viewer-container">
+                    <img id="rotatable-image" class="simulated-image" src="https://placehold.co/400x250/a7d9f7/1e40af?text=Rotate+Me" alt="Simulated rotatable photo">
+                    <p id="rotation-status" class="text-stone-600 mt-4">Current Rotation: 0°</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <h4 class="text-xl font-semibold text-green-800 mb-3">Rotate Your Photo:</h4>
+                    <p class="text-stone-700 mb-4">Use these buttons to spin the image left or right. Most photo viewers have similar controls.</p>
+                    <div class="flex space-x-4 justify-center">
+                        <button id="rotate-left-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Rotate Left ( counter-clockwise)</button>
+                        <button id="rotate-right-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Rotate Right (clockwise)</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="crop-image" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Basic Cropping</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Cropping allows you to remove unwanted parts of an image, focusing on a specific area. It's like cutting out a section of a physical photo. Click "Simulate Crop" to see the selection area.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="simulated-viewer-container">
+                    <img class="simulated-image" src="https://placehold.co/400x250/bfdbfe/1e40af?text=Crop+This+Photo" alt="Simulated croppable photo">
+                    <div id="cropping-overlay" class="cropping-overlay"></div>
+                    <p id="crop-status" class="text-stone-600 mt-4">Ready to crop.</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <h4 class="text-xl font-semibold text-blue-800 mb-3">Crop Your Photo:</h4>
+                    <p class="text-stone-700 mb-4">Most photo editors let you drag a box over the area you want to keep. Everything outside the box is removed.</p>
+                    <div class="flex space-x-4 justify-center">
+                        <button id="simulate-crop-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Simulate Crop</button>
+                        <button id="apply-crop-btn" class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition">Apply Crop</button>
+                        <button id="reset-crop-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Opening Images Section ---
+            const openedImage = document.getElementById('opened-image');
+            const openStatus = document.getElementById('open-status');
+            const nextOpenStepBtn = document.getElementById('next-open-step');
+            const openStepsContainer = document.getElementById('open-steps-container');
+            let currentOpenStep = 0;
+            const totalOpenSteps = 3;
+
+            function showOpenStep(stepIndex) {
+                Array.from(openStepsContainer.children).forEach((step, index) => {
+                    step.classList.remove('active');
+                    if (index === stepIndex) {
+                        step.classList.add('active');
+                    }
+                });
+
+                if (stepIndex === 0) {
+                    openedImage.classList.add('hidden');
+                    openStatus.textContent = 'No image opened yet.';
+                    openStatus.classList.remove('bg-green-100', 'text-green-800');
+                    openStatus.classList.add('bg-stone-100', 'text-stone-600');
+                } else if (stepIndex === 3) {
+                    openedImage.classList.remove('hidden');
+                    openStatus.textContent = 'Image opened successfully!';
+                    openStatus.classList.remove('bg-stone-100', 'text-stone-600');
+                    openStatus.classList.add('bg-green-100', 'text-green-800');
+                } else {
+                    openStatus.textContent = 'Follow the steps to open the image.';
+                    openStatus.classList.remove('bg-green-100', 'text-green-800');
+                    openStatus.classList.add('bg-stone-100', 'text-stone-600');
+                }
+                nextOpenStepBtn.textContent = (stepIndex === totalOpenSteps) ? 'Restart Simulation' : 'Next Step';
+            }
+
+            nextOpenStepBtn.addEventListener('click', () => {
+                currentOpenStep++;
+                if (currentOpenStep > totalOpenSteps) {
+                    currentOpenStep = 0;
+                }
+                showOpenStep(currentOpenStep);
+            });
+            showOpenStep(currentOpenStep); // Initial load
+
+            // --- Basic Rotation Section ---
+            const rotatableImage = document.getElementById('rotatable-image');
+            const rotateLeftBtn = document.getElementById('rotate-left-btn');
+            const rotateRightBtn = document.getElementById('rotate-right-btn');
+            const rotationStatus = document.getElementById('rotation-status');
+            let currentRotation = 0;
+
+            function updateRotation() {
+                rotatableImage.style.transform = `rotate(${currentRotation}deg)`;
+                rotationStatus.textContent = `Current Rotation: ${currentRotation}°`;
+            }
+
+            rotateLeftBtn.addEventListener('click', () => {
+                currentRotation -= 90;
+                if (currentRotation < 0) currentRotation += 360; // Keep within 0-359
+                updateRotation();
+            });
+
+            rotateRightBtn.addEventListener('click', () => {
+                currentRotation += 90;
+                if (currentRotation >= 360) currentRotation -= 360; // Keep within 0-359
+                updateRotation();
+            });
+            updateRotation(); // Initial load
+
+            // --- Basic Cropping Section ---
+            const croppingOverlay = document.getElementById('cropping-overlay');
+            const simulateCropBtn = document.getElementById('simulate-crop-btn');
+            const applyCropBtn = document.getElementById('apply-crop-btn');
+            const resetCropBtn = document.getElementById('reset-crop-btn');
+            const cropStatus = document.getElementById('crop-status');
+
+            simulateCropBtn.addEventListener('click', () => {
+                croppingOverlay.classList.add('active');
+                cropStatus.textContent = 'Cropping area selected. Click "Apply Crop".';
+                cropStatus.classList.remove('bg-green-100', 'text-green-800');
+                cropStatus.classList.add('bg-stone-100', 'text-stone-600');
+            });
+
+            applyCropBtn.addEventListener('click', () => {
+                if (croppingOverlay.classList.contains('active')) {
+                    croppingOverlay.classList.remove('active'); // Simulate crop applied
+                    cropStatus.textContent = 'Crop applied! (Image adjusted to selection)';
+                    cropStatus.classList.remove('bg-stone-100', 'text-stone-600');
+                    cropStatus.classList.add('bg-green-100', 'text-green-800');
+                } else {
+                    cropStatus.textContent = 'Simulate crop first!';
+                    cropStatus.classList.remove('bg-green-100', 'text-green-800');
+                    cropStatus.classList.add('bg-red-100', 'text-red-800');
+                }
+            });
+
+            resetCropBtn.addEventListener('click', () => {
+                croppingOverlay.classList.remove('active');
+                cropStatus.textContent = 'Ready to crop.';
+                cropStatus.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+                cropStatus.classList.add('bg-stone-100', 'text-stone-600');
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

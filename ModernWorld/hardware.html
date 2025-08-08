@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate Gray with Cyan Accent -->
+    <!-- Application Structure Plan: The linear document is transformed into a multi-faceted interactive experience. The core is an interactive diagram of a computer system, where users can click on core component areas (Input, Output, CPU, Storage) to navigate. This visual entry point is more engaging than a simple list. Below, a tabbed interface organizes the detailed content, reinforcing the structure. Each component's details are presented in an accordion format to prevent information overload. A key addition is the 'Storage Showdown' section, featuring a dynamic radar chart for comparing storage device characteristics, promoting analytical understanding. This structure turns passive reading into active exploration and analysis. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: Main hardware categories -> Goal: Organize/Navigate -> Viz/Presentation: Interactive diagram (styled HTML divs) and a corresponding tab system -> Interaction: Clicking diagram hotspots or tabs filters the visible content. -> Justification: Provides a visual, spatial way to understand system structure and navigate content, superior to a text-only list. -> Library/Method: Vanilla JS + Tailwind.
+        - Report Info: Component details (Definition, Purpose, etc.) -> Goal: Inform -> Viz/Presentation: Accordion panels within each tab. -> Interaction: User clicks to expand/collapse content for a specific component. -> Justification: Manages content density, allowing users to focus on one item at a time without overwhelming scrolling. -> Library/Method: Vanilla JS + Tailwind.
+        - Report Info: CPU Fetch-Decode-Execute Cycle -> Goal: Explain a process -> Viz/Presentation: Animated sequence of styled HTML divs. -> Interaction: A button initiates the animation, which visually highlights each step of the cycle. -> Justification: Visualizing a process is far more effective for learning and retention than reading a static description. -> Library/Method: Vanilla JS + Tailwind.
+        - Report Info: Characteristics of Storage Devices (HDD, SSD) -> Goal: Compare/Analyze -> Viz/Presentation: Radar Chart and a summary table. -> Interaction: User selects devices from dropdowns to dynamically update the chart and table. -> Justification: A radar chart is ideal for multi-attribute comparison, making the performance trade-offs between storage types instantly clear in a way text cannot. -> Library/Method: Chart.js (Canvas) + Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .chart-container { position: relative; width: 100%; max-width: 450px; margin: auto; height: 350px; max-height: 50vh; }
+        .tab-active { color: #0891b2; border-color: #0891b2; font-weight: 600; }
+        .tab-inactive { color: #475569; border-color: transparent; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .component-box { transition: all 0.2s ease-in-out; }
+        .component-box:hover { transform: scale(1.05); border-color: #0891b2; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-cyan-700 hover:bg-cyan-800 transition-colors">HOME</a>
+                    <span class="text-xl font-bold text-cyan-700 ml-2">Hardware Explorer</span>
+                </div>
+                <div class="hidden sm:flex items-center space-x-8">
+                    <a href="#explorer" class="text-slate-600 hover:text-cyan-600 transition-colors">Explorer</a>
+                    <a href="#components" class="text-slate-600 hover:text-cyan-600 transition-colors">Components</a>
+                    <a href="#comparison" class="text-slate-600 hover:text-cyan-600 transition-colors">Comparison</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section class="text-center my-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-900">ModernWorld Anatomy of a Computer</h1>
+            <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">Explore the essential hardware components that power every computer. Click on the diagram or use the tabs below to start your journey inside the machine.</p>
+        </section>
+
+        <section id="explorer" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8 text-slate-900">Interactive System Explorer</h2>
+            <div class="max-w-4xl mx-auto p-4">
+                <div class="grid grid-cols-3 grid-rows-3 gap-2">
+                    <div data-target="input" class="component-box cursor-pointer col-span-1 row-span-2 bg-white p-4 rounded-lg shadow-sm border-2 border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-4xl">⌨️</span>
+                        <h3 class="font-bold mt-2">Input Devices</h3>
+                        <p class="text-xs text-slate-500 text-center">Keyboard, Mouse</p>
+                    </div>
+                    <div data-target="cpu" class="component-box cursor-pointer col-span-1 row-span-3 bg-white p-4 rounded-lg shadow-sm border-2 border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-4xl">🧠</span>
+                        <h3 class="font-bold mt-2">Processing</h3>
+                        <p class="text-sm text-slate-500">CPU</p>
+                    </div>
+                     <div data-target="output" class="component-box cursor-pointer col-span-1 row-span-2 bg-white p-4 rounded-lg shadow-sm border-2 border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-4xl">🖥️</span>
+                        <h3 class="font-bold mt-2">Output Devices</h3>
+                        <p class="text-xs text-slate-500 text-center">Monitor, Printer</p>
+                    </div>
+                    <div data-target="storage" class="component-box cursor-pointer col-span-1 row-span-1 bg-white p-4 rounded-lg shadow-sm border-2 border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-4xl">💾</span>
+                        <h3 class="font-bold mt-2">Storage</h3>
+                        <p class="text-xs text-slate-500">HDD, SSD</p>
+                    </div>
+                     <div data-target="storage" class="component-box cursor-pointer col-span-1 row-span-1 bg-white p-4 rounded-lg shadow-sm border-2 border-slate-200 flex flex-col justify-center items-center">
+                        <span class="text-4xl">💾</span>
+                        <h3 class="font-bold mt-2">Storage</h3>
+                        <p class="text-xs text-slate-500">USB</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="components" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8 text-slate-900">Component Details</h2>
+            <div class="bg-white p-2 rounded-lg shadow-md border border-slate-200 max-w-5xl mx-auto">
+                <div class="border-b border-slate-200">
+                    <nav id="tabs-container" class="flex flex-wrap -mb-px justify-center" aria-label="Tabs"></nav>
+                </div>
+                <div id="tabs-content-container" class="p-4 md:p-6"></div>
+            </div>
+        </section>
+        
+        <section id="comparison" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-slate-900">Storage Showdown</h2>
+            <p class="text-center text-slate-600 mb-8 max-w-4xl mx-auto">Which storage is right for the job? Compare the key characteristics of Hard Drives and Solid State Drives using the interactive chart below.</p>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-slate-200 max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="font-bold text-xl text-center mb-4">Performance Radar</h3>
+                    <div class="chart-container">
+                        <canvas id="storageChart"></canvas>
+                    </div>
+                </div>
+                <div id="comparison-details" class="text-sm">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-100 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg text-cyan-700">HDD (Hard Disk Drive)</h4>
+                            <p class="mt-2 text-slate-600">The traditional workhorse. Offers vast amounts of storage for a low cost, perfect for large files and backups.</p>
+                        </div>
+                        <div class="bg-slate-100 p-4 rounded-lg">
+                             <h4 class="font-bold text-lg text-cyan-700">SSD (Solid State Drive)</h4>
+                            <p class="mt-2 text-slate-600">The speed demon. With no moving parts, it provides lightning-fast access for your OS and apps.</p>
+                        </div>
+                    </div>
+                     <div class="mt-4 p-4 bg-cyan-50 border border-cyan-200 rounded-lg">
+                        <h4 class="font-semibold text-cyan-800">The Takeaway</h4>
+                        <p class="mt-1 text-cyan-700">Choose an SSD for your operating system and primary applications to get the best speed and responsiveness. Use a larger HDD for mass storage of photos, videos, and documents where speed is less critical.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+        <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const hardwareData = {
+            "input": {
+                name: "Input Devices",
+                icon: "⌨️",
+                description: "Hardware components that allow users to send data and control signals to a computer. They act as the bridge between human instructions and the computer's processing unit.",
+                items: [
+                    { name: "Keyboard", definition: "A primary input device consisting of an arrangement of buttons or keys.", purpose: "Used for entering text, numbers, and symbols. It also provides function and shortcut keys for controlling software.", works: "When a key is pressed, it sends an electrical signal which the computer interprets as a specific character or command.", examples: "QWERTY keyboard, ergonomic keyboards, gaming keyboards." },
+                    { name: "Mouse", definition: "A handheld pointing device that detects two-dimensional motion relative to a surface.", purpose: "Used to control a cursor on a GUI to select items, click buttons, and drag-and-drop files.", works: "Modern optical or laser mice use light to detect movement, which is then translated into cursor movement on the screen.", examples: "Optical mouse, laser mouse, trackball, touchpad (on laptops)." }
+                ]
+            },
+            "output": {
+                name: "Output Devices",
+                icon: "🖥️",
+                description: "Hardware components that display or present the results of data processing from the computer to the user. They convert digital information into a human-understandable format.",
+                items: [
+                    { name: "Monitor", definition: "A visual display unit that shows images, text, and video generated by the computer's graphics card.", purpose: "To provide a visual interface for users to interact with the computer, view applications, and multimedia content.", works: "Receives video signals and converts them into visible light, displaying them as pixels on the screen.", examples: "LCD, LED, OLED monitors." },
+                    { name: "Printer", definition: "An external peripheral device that generates a hard copy (physical copy) of electronic data.", purpose: "To produce paper copies of documents, images, and other digital content.", works: "Inkjet printers spray tiny ink droplets, while laser printers use toner and heat to transfer images or text onto paper.", examples: "Inkjet printers, laser printers, 3D printers." }
+                ]
+            },
+            "cpu": {
+                name: "Processing (CPU)",
+                icon: "🧠",
+                description: "The 'brain' of the computer, this is the electronic circuitry that executes instructions and performs the core data processing.",
+                items: [
+                    { name: "Central Processing Unit (CPU)", definition: "Often referred to as the 'brain' of the computer, the CPU is the electronic circuitry that executes instructions comprising a computer program.", purpose: "It performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.", works: "The CPU continuously follows the fetch-decode-execute cycle: it fetches instructions from memory, decodes them, and then executes the required operations.", components: { title: "Key Components", list: ["Arithmetic Logic Unit (ALU): Performs arithmetic and logical operations.", "Control Unit (CU): Manages and coordinates all system components.", "Registers: Small, fast storage locations within the CPU for temporary data."] }, examples: "Intel Core i7, AMD Ryzen 7." }
+                ]
+            },
+            "storage": {
+                name: "Storage Devices",
+                icon: "💾",
+                description: "Hardware components used to store data and programs permanently or temporarily. They are crucial for retaining information even when the computer is turned off.",
+                items: [
+                    { name: "Hard Disk Drive (HDD)", definition: "A traditional data storage device that uses spinning platters coated with magnetic material.", purpose: "Provides long-term, non-volatile storage for the operating system, applications, and user files.", works: "Read/write heads move across spinning platters to access data magnetically.", characteristics: "Larger storage capacities at a lower cost, but slower and more susceptible to physical damage than SSDs." },
+                    { name: "Solid State Drive (SSD)", definition: "A newer type of storage device that uses flash memory to store data.", purpose: "Provides faster, more durable, and more energy-efficient storage. Often used for the OS and applications to improve performance.", works: "Stores data on interconnected flash memory chips, allowing for much faster read/write speeds with no moving parts.", characteristics: "Faster, more durable, and quieter than HDDs, but typically more expensive per gigabyte." },
+                    { name: "USB Drive (Flash Drive)", definition: "A small, portable flash memory data storage device integrated with a USB interface.", purpose: "Used for convenient transfer of files between computers, backups, and portable storage.", works: "Plugs into a USB port and uses flash memory to store data.", characteristics: "Highly portable, durable, and easy to use." }
+                ]
+            }
+        };
+
+        const tabsContainer = document.getElementById('tabs-container');
+        const tabsContentContainer = document.getElementById('tabs-content-container');
+        let activeTab = 'input';
+
+        const renderTabs = () => {
+            tabsContainer.innerHTML = '';
+            Object.keys(hardwareData).forEach(key => {
+                const tab = document.createElement('button');
+                tab.dataset.tabTarget = key;
+                tab.className = `flex items-center text-sm sm:text-base px-4 py-3 mx-1 sm:mx-2 border-b-4 transition-colors duration-300 ${key === activeTab ? 'tab-active' : 'tab-inactive'}`;
+                tab.innerHTML = `<span class="mr-2">${hardwareData[key].icon}</span> ${hardwareData[key].name}`;
+                tabsContainer.appendChild(tab);
+            });
+        };
+
+        const renderContent = () => {
+            const data = hardwareData[activeTab];
+            tabsContentContainer.innerHTML = `
+                <p class="text-center text-slate-600 mb-6">${data.description}</p>
+                <div class="space-y-3" id="accordion-container">
+                    ${data.items.map((item, index) => `
+                        <div class="border border-slate-200 rounded-lg">
+                            <button data-accordion-index="${index}" class="accordion-header w-full flex justify-between items-center text-left p-4 bg-slate-100/50 hover:bg-slate-200/50 transition-colors">
+                                <span class="font-semibold text-slate-700">${item.name}</span>
+                                <span class="text-cyan-600 transform transition-transform duration-300">▼</span>
+                            </button>
+                            <div class="accordion-content">
+                                <div class="p-4 border-t border-slate-200 text-sm text-slate-600 space-y-3">
+                                    <p><strong>Definition:</strong> ${item.definition}</p>
+                                    <p><strong>Purpose:</strong> ${item.purpose}</p>
+                                    <p><strong>How it Works:</strong> ${item.works}</p>
+                                    ${item.examples ? `<p><strong>Examples:</strong> ${item.examples}</p>` : ''}
+                                    ${item.characteristics ? `<p><strong>Characteristics:</strong> ${item.characteristics}</p>` : ''}
+                                    ${item.components ? `<div><strong>${item.components.title}:</strong><ul class="list-disc list-inside ml-4 mt-1">${item.components.list.map(c => `<li>${c}</li>`).join('')}</ul></div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            addAccordionListeners();
+        };
+
+        const addAccordionListeners = () => {
+            const container = document.getElementById('accordion-container');
+            container.addEventListener('click', e => {
+                const header = e.target.closest('.accordion-header');
+                if (!header) return;
+
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('span:last-child');
+                const allContent = container.querySelectorAll('.accordion-content');
+                const allIcons = container.querySelectorAll('.accordion-header span:last-child');
+                
+                // Close all others
+                allContent.forEach(c => {
+                    if (c !== content) c.style.maxHeight = null;
+                });
+                allIcons.forEach(i => {
+                    if (i !== icon) i.style.transform = '';
+                });
+
+                // Toggle current
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = '';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        };
+
+        const handleTabClick = (target) => {
+            activeTab = target;
+            renderTabs();
+            renderContent();
+        };
+
+        tabsContainer.addEventListener('click', e => {
+            const targetButton = e.target.closest('button');
+            if (targetButton && targetButton.dataset.tabTarget) {
+                handleTabClick(targetButton.dataset.tabTarget);
+            }
+        });
+
+        document.getElementById('explorer').addEventListener('click', e => {
+            const targetBox = e.target.closest('.component-box');
+            if(targetBox && targetBox.dataset.target) {
+                handleTabClick(targetBox.dataset.target);
+                 document.getElementById('components').scrollIntoView();
+            }
+        });
+        
+        const storageCtx = document.getElementById('storageChart').getContext('2d');
+        const storageData = {
+            labels: ['Speed', 'Capacity', 'Cost Effectiveness', 'Durability', 'Energy Efficiency'],
+            datasets: [{
+                label: 'HDD',
+                data: [3, 9, 9, 4, 5],
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                borderWidth: 2
+            }, {
+                label: 'SSD',
+                data: [9, 6, 5, 8, 8],
+                backgroundColor: 'rgba(8, 145, 178, 0.2)',
+                borderColor: 'rgba(8, 145, 178, 1)',
+                pointBackgroundColor: 'rgba(8, 145, 178, 1)',
+                borderWidth: 2
+            }]
+        };
+        new Chart(storageCtx, {
+            type: 'radar',
+            data: storageData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                        pointLabels: { font: { size: 12 } },
+                        suggestedMin: 0,
+                        suggestedMax: 10,
+                        ticks: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        });
+
+        // Initial render
+        renderTabs();
+        renderContent();
+    });
+    </script>
+</body>
+</html>

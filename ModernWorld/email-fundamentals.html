@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is organized into distinct, scrollable sections: an Introduction, "What is Email?", "Setting Up an Account," "Sending Emails," "Receiving Emails," "Attaching Files," and "Understanding Spam." A sticky navigation bar allows quick jumps between these topics. Procedural sections (Setting Up, Sending, Attaching) feature interactive step-by-step simulations with dynamic visual feedback. Conceptual sections (What is Email?, Receiving, Spam) use clear textual explanations, visual metaphors (for email concept), or expandable details. This design prioritizes active learning and visual reinforcement to make complex email concepts accessible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Definition of Email. -> Goal: Inform/Explain. -> Viz/Method: A simple HTML/CSS diagram showing two "users" with "mailboxes" and "messages" flowing between them (Unicode characters). -> Interaction: None. -> Justification: Provides a clear visual metaphor for digital communication. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Steps for setting up an account. -> Goal: Instruct. -> Viz/Method: A simulated account creation form with dummy fields. -> Interaction: "Next Step" button reveals sequential instructions and updates the simulated form's state (e.g., showing a "success" message). -> Justification: Mimics the real process, making it less abstract. -> Library/Method: Vanilla JS.
+        - Report Info: Sending email fields (To, Cc, Bcc, Subject, Body, Send). -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated "Compose Email" window (HTML/CSS). -> Interaction: Buttons for "Fill 'To' Field", "Add Subject", "Type Message", "Send" trigger visual updates in the simulated window. -> Justification: Provides a direct, interactive walkthrough of composing an email. -> Library/Method: Vanilla JS.
+        - Report Info: Receiving emails (Inbox, reading, replying, forwarding). -> Goal: Inform/Demonstrate. -> Viz/Method: A simulated "Inbox" list with clickable email entries. Clicking an email reveals a "reading pane" with content and "Reply/Forward" buttons. -> Interaction: Clicking an email in the list shows its content; clicking Reply/Forward buttons updates a status message. -> Justification: Mimics the actual inbox experience, making it relatable. -> Library/Method: Vanilla JS.
+        - Report Info: Attaching files process. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated "attachment icon" and a "file" icon. -> Interaction: "Attach File" button triggers an animation of the file "attaching" to the email. -> Justification: Visualizes the abstract process of attaching a file. -> Library/Method: Vanilla JS.
+        - Report Info: Understanding spam (definition, identification, avoidance). -> Goal: Inform/Educate. -> Viz/Method: Clear textual explanation with expandable sections for "What is Spam?" and "How to Identify/Avoid." -> Interaction: Clickable headers to expand/collapse content. -> Justification: Presents critical safety information clearly and concisely, allowing users to delve deeper if desired. -> Library/Method: HTML/CSS with Tailwind, Vanilla JS for toggles.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .email-flow-node {
+            width: 80px;
+            height: 80px;
+            background-color: #bfdbfe; /* blue-200 */
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #1e40af; /* blue-800 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .email-flow-arrow {
+            font-size: 2rem;
+            color: #9ca3af; /* gray-400 */
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .simulated-form-field {
+            background-color: #e2e8f0; /* slate-200 */
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            color: #475569; /* slate-600 */
+            font-size: 0.9rem;
+        }
+        .simulated-form-field.filled {
+            background-color: #dbeafe; /* blue-100 */
+            color: #1e40af; /* blue-800 */
+            font-weight: 500;
+        }
+        .compose-email-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .compose-field {
+            border: 1px solid #e2e8f0; /* slate-200 */
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #334155; /* slate-700 */
+            background-color: #f8fafc; /* light blue-gray */
+        }
+        .compose-field.filled {
+            background-color: #dbeafe; /* blue-100 */
+            font-weight: 500;
+        }
+        .inbox-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 1fr; /* Default for mobile */
+            gap: 1px; /* To create visual separation */
+            border: 1px solid #e2e8f0;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .inbox-sim {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+        .inbox-list {
+            background-color: #f8fafc;
+            padding: 10px;
+            border-right: 1px solid #e2e8f0;
+        }
+        .email-item {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .email-item:hover {
+            background-color: #e0f2fe; /* blue-50 */
+        }
+        .email-item.unread {
+            font-weight: 700;
+            color: #1e40af; /* blue-800 */
+        }
+        .email-item.active {
+            background-color: #dbeafe; /* blue-100 */
+        }
+        .reading-pane {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+        .attachment-sim {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+            position: relative;
+            margin: 20px auto;
+            max-width: 300px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+        }
+        .attachment-icon {
+            font-size: 3rem;
+            color: #475569; /* slate-600 */
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+        .file-to-attach {
+            font-size: 2.5rem;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            opacity: 0;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+        .file-to-attach.attached {
+            transform: translate(80px, 40px); /* Move towards attachment icon */
+            opacity: 1;
+        }
+        .spam-toggle-header {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #f0f9ff; /* blue-50 */
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #1e40af; /* blue-800 */
+            transition: background-color 0.2s ease;
+        }
+        .spam-toggle-header:hover {
+            background-color: #e0f2fe; /* blue-100 */
+        }
+        .spam-content {
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e0f2fe;
+            border-top: none;
+            display: none;
+        }
+        .spam-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-teal-700 hover:bg-teal-800 transition-colors">HOME</a>
+                <h1 class="text-xl font-bold text-teal-800 ml-2">Email Essentials</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Intro</a>
+                <a href="#what-is-email" class="nav-link text-stone-600 hover:text-teal-600 font-medium">What is Email?</a>
+                <a href="#setup-account" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Setup</a>
+                <a href="#sending" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Sending</a>
+                <a href="#receiving" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Receiving</a>
+                <a href="#attaching" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Attaching</a>
+                <a href="#spam" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Spam</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-teal-800 mb-4">ModernWorld Email Fundamentals: Connect & Communicate</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Email is a cornerstone of digital communication. This guide will walk you through everything you need to know to get started, send messages, and stay safe online.</p>
+        </section>
+
+        <section id="what-is-email" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">What is Email?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Email (electronic mail) is a method of exchanging digital messages over the Internet. It's like sending a letter, but instantly and digitally.</p>
+            </div>
+            <div class="flex justify-center items-center space-x-4">
+                <div class="email-flow-node">
+                    🧑‍💻<br>Sender
+                </div>
+                <div class="email-flow-arrow">→</div>
+                <div class="email-flow-node">
+                    📧<br>Email Server
+                </div>
+                <div class="email-flow-arrow">→</div>
+                <div class="email-flow-node">
+                    👤<br>Recipient
+                </div>
+            </div>
+            <p class="text-center text-stone-600 mt-8 max-w-xl mx-auto">Email allows you to send text messages, documents, photos, and more, to anyone with an email address, anywhere in the world.</p>
+        </section>
+
+        <section id="setup-account" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Setting Up an Email Account</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">To use email, you first need an email account. This involves choosing a provider and creating your unique address and password.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-white p-6 rounded-lg shadow-md max-w-sm mx-auto">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-4">Simulated Sign-Up Form</h4>
+                    <div class="simulated-form-field" id="signup-name">Full Name: [Your Name]</div>
+                    <div class="simulated-form-field" id="signup-email">Desired Email: [email@example.com]</div>
+                    <div class="simulated-form-field" id="signup-password">Password: [********]</div>
+                    <div class="simulated-form-field" id="signup-phone">Phone (Optional): [###-###-####]</div>
+                    <div id="signup-status" class="mt-4 p-2 text-center text-sm rounded-md bg-stone-100 text-stone-600">Fill out the details.</div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="setup-steps-container">
+                        <div id="setup-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Ready to create an account?</h4>
+                            <p class="text-stone-700">Click "Next Step" to see the process.</p>
+                        </div>
+                        <div id="setup-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 1: Choose Provider</h4>
+                            <p class="text-stone-700">Select an email service (e.g., Gmail, Outlook, Yahoo Mail). Go to their website and look for "Sign Up" or "Create Account."</p>
+                        </div>
+                        <div id="setup-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 2: Provide Details</h4>
+                            <p class="text-stone-700">Fill in your name, desired email address (check availability), and create a strong password. You might also need to provide a phone number for verification.</p>
+                        </div>
+                        <div id="setup-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 3: Agree & Create</h4>
+                            <p class="text-stone-700">Read and agree to the terms of service, then click "Create Account" or "Sign Up." Your account is now ready!</p>
+                        </div>
+                    </div>
+                    <button id="next-setup-step" class="mt-4 bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="sending" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Sending Emails</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Composing and sending an email involves filling out a few key fields. Use the simulator below to understand each part.</p>
+            </div>
+            
+            <div class="compose-email-sim">
+                <h4 class="text-xl font-semibold text-teal-800 mb-4">Simulated Compose Window</h4>
+                <div id="compose-to" class="compose-field">To:</div>
+                <div id="compose-cc" class="compose-field">Cc: (Carbon Copy - for visibility)</div>
+                <div id="compose-bcc" class="compose-field">Bcc: (Blind Carbon Copy - recipients hidden from others)</div>
+                <div id="compose-subject" class="compose-field">Subject:</div>
+                <div id="compose-body" class="compose-field h-24">Message Body: Type your message here...</div>
+                <div id="compose-status" class="mt-4 p-2 text-center text-sm rounded-md bg-stone-100 text-stone-600">Start composing your email.</div>
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button id="fill-to-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Fill 'To'</button>
+                    <button id="fill-subject-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Add Subject</button>
+                    <button id="type-body-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Type Body</button>
+                    <button id="send-email-btn" class="bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition">Send</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="receiving" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Receiving Emails</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Your inbox is where you receive messages. Learn how to read, reply to, and forward emails.</p>
+            </div>
+            
+            <div class="inbox-sim">
+                <div class="inbox-list">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-3">Inbox</h4>
+                    <div class="email-item unread" data-email-id="1">
+                        <p class="font-bold">John Doe - Project Update</p>
+                        <p class="text-sm text-stone-500">Hi team, just wanted to give a quick update on the project...</p>
+                    </div>
+                    <div class="email-item" data-email-id="2">
+                        <p class="font-normal">Marketing - Special Offer!</p>
+                        <p class="text-sm text-stone-500">Don't miss out on our exclusive discount...</p>
+                    </div>
+                    <div class="email-item unread" data-email-id="3">
+                        <p class="font-bold">Sarah Lee - Meeting Tomorrow</p>
+                        <p class="text-sm text-stone-500">Reminder: Our meeting is scheduled for 10 AM tomorrow...</p>
+                    </div>
+                </div>
+                <div class="reading-pane">
+                    <h4 id="reading-pane-subject" class="text-xl font-semibold text-teal-800 mb-2">Select an Email to Read</h4>
+                    <p id="reading-pane-sender" class="text-sm text-stone-600 mb-4"></p>
+                    <div id="reading-pane-body" class="text-stone-700 mb-6">
+                        Click on an email in the inbox list to view its content here.
+                    </div>
+                    <div id="reading-pane-actions" class="flex space-x-2">
+                        <button id="reply-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Reply</button>
+                        <button id="forward-btn" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Forward</button>
+                    </div>
+                    <p id="action-status" class="mt-4 text-sm text-stone-600"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="attaching" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Attaching Files to Emails</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">You can send documents, photos, or other files along with your email message. This is how you "attach" them.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="attachment-sim">
+                    <span class="attachment-icon">📎</span>
+                    <span id="file-to-attach-visual" class="file-to-attach">📄</span>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="attach-steps-container">
+                        <div id="attach-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Ready to attach a file?</h4>
+                            <p class="text-stone-700">Click "Attach File" to see the process.</p>
+                        </div>
+                        <div id="attach-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 1: Look for Attachment Icon</h4>
+                            <p class="text-stone-700">When composing an email, find the paperclip icon (📎) or a button labeled "Attach File."</p>
+                        </div>
+                        <div id="attach-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 2: Select File</h4>
+                            <p class="text-stone-700">Click the attachment icon. A window will open, allowing you to browse your computer for the file you want to send. Select it and click "Open" or "Choose."</p>
+                        </div>
+                        <div id="attach-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-teal-800 mb-2">Step 3: File Attached!</h4>
+                            <p class="text-stone-700">The file will now appear listed in your email, often next to the attachment icon or below the subject line. You can now send your email.</p>
+                        </div>
+                    </div>
+                    <button id="next-attach-step" class="mt-4 bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition">Attach File</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="spam" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Understanding Spam: Stay Safe Online</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Spam refers to unsolicited, unwanted, or junk email messages. It can be annoying and sometimes dangerous. Learn how to protect yourself.</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+                <div class="mb-4">
+                    <div class="spam-toggle-header" data-toggle="what-is-spam">
+                        <span>What is Spam?</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="what-is-spam" class="spam-content">
+                        <p class="text-stone-700 mb-2">Spam is typically commercial in nature (ads, promotions) but can also be phishing attempts (trying to trick you into revealing personal info) or malware distribution.</p>
+                        <p class="text-stone-700">Most email providers use filters to automatically move suspected spam to a "Junk" or "Spam" folder, but some might still get through.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="spam-toggle-header" data-toggle="identify-avoid-spam">
+                        <span>How to Identify and Avoid Spam</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="identify-avoid-spam" class="spam-content">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-2">Common Red Flags:</h5>
+                        <ul class="list-disc list-inside text-stone-700 mb-4 space-y-1">
+                            <li>**Suspicious Sender:** Unfamiliar email addresses, generic names, or addresses that don't match the company they claim to be from.</li>
+                            <li>**Generic Greetings:** "Dear Customer" instead of your name.</li>
+                            <li>**Urgent/Threatening Language:** Messages demanding immediate action or threatening consequences.</li>
+                            <li>**Too Good to Be True Offers:** "You've won a lottery!" or unbelievable discounts.</li>
+                            <li>**Poor Grammar/Spelling:** Many spam emails contain obvious errors.</li>
+                            <li>**Suspicious Links/Attachments:** Hover over links to see the actual URL before clicking. Never open unexpected attachments.</li>
+                        </ul>
+                        <h5 class="text-lg font-semibold text-teal-800 mb-2">Best Practices:</h5>
+                        <ul class="list-disc list-inside text-stone-700 space-y-1">
+                            <li>**Don't Reply:** Replying confirms your email is active.</li>
+                            <li>**Don't Click Links:** Especially if suspicious.</li>
+                            <li>**Mark as Spam:** Use your email client's "Mark as Spam" or "Junk" button to help train your filter.</li>
+                            <li>**Delete Suspicious Emails:** When in doubt, delete it.</li>
+                            <li>**Be Cautious with Personal Info:** Never give out passwords, bank details, or sensitive information via email unless you initiated the contact and are certain of the recipient's identity.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generic step navigator function
+            function setupStepNavigator(sectionId, totalSteps, visualCallback) {
+                let currentStep = 0;
+                const stepsContainer = document.getElementById(`${sectionId}-steps-container`);
+                const nextButton = document.getElementById(`next-${sectionId}-step`);
+                const stepContents = [];
+
+                for (let i = 0; i <= totalSteps; i++) {
+                    const step = document.getElementById(`${sectionId}-step-${i}`);
+                    if (step) {
+                        stepContents.push(step);
+                    }
+                }
+
+                function showStep(stepIndex) {
+                    stepContents.forEach((step, index) => {
+                        step.classList.remove('active');
+                        if (index === stepIndex) {
+                            step.classList.add('active');
+                        }
+                    });
+                    if (visualCallback) {
+                        visualCallback(stepIndex);
+                    }
+                    nextButton.textContent = (stepIndex === totalSteps) ? 'Restart' : 'Next Step';
+                }
+
+                nextButton.addEventListener('click', function () {
+                    currentStep++;
+                    if (currentStep > totalSteps) {
+                        currentStep = 0; // Loop back to start
+                    }
+                    showStep(currentStep);
+                });
+
+                showStep(currentStep); // Initialize first step
+            }
+
+            // --- Setup Account Section ---
+            const signupName = document.getElementById('signup-name');
+            const signupEmail = document.getElementById('signup-email');
+            const signupPassword = document.getElementById('signup-password');
+            const signupPhone = document.getElementById('signup-phone');
+            const signupStatus = document.getElementById('signup-status');
+
+            setupStepNavigator('setup', 3, (step) => {
+                signupName.classList.remove('filled');
+                signupEmail.classList.remove('filled');
+                signupPassword.classList.remove('filled');
+                signupPhone.classList.remove('filled');
+                signupStatus.textContent = 'Fill out the details.';
+                signupStatus.classList.remove('bg-green-100', 'text-green-800');
+                signupStatus.classList.add('bg-stone-100', 'text-stone-600');
+
+                if (step === 2) {
+                    signupName.classList.add('filled');
+                    signupEmail.classList.add('filled');
+                    signupPassword.classList.add('filled');
+                    signupStatus.textContent = 'Details entered. Almost there!';
+                } else if (step === 3) {
+                    signupName.classList.add('filled');
+                    signupEmail.classList.add('filled');
+                    signupPassword.classList.add('filled');
+                    signupStatus.textContent = 'Account created successfully!';
+                    signupStatus.classList.remove('bg-stone-100', 'text-stone-600');
+                    signupStatus.classList.add('bg-green-100', 'text-green-800');
+                }
+            });
+
+            // --- Sending Emails Section ---
+            const composeTo = document.getElementById('compose-to');
+            const composeCc = document.getElementById('compose-cc');
+            const composeBcc = document.getElementById('compose-bcc');
+            const composeSubject = document.getElementById('compose-subject');
+            const composeBody = document.getElementById('compose-body');
+            const composeStatus = document.getElementById('compose-status');
+
+            document.getElementById('fill-to-btn').addEventListener('click', () => {
+                composeTo.textContent = 'To: recipient@example.com';
+                composeTo.classList.add('filled');
+                composeStatus.textContent = 'Recipient added. Now add a subject!';
+            });
+            document.getElementById('fill-subject-btn').addEventListener('click', () => {
+                composeSubject.textContent = 'Subject: Quick Update';
+                composeSubject.classList.add('filled');
+                composeStatus.textContent = 'Subject added. Time to write your message!';
+            });
+            document.getElementById('type-body-btn').addEventListener('click', () => {
+                composeBody.textContent = 'Message Body: Hello, hope you are doing well. Just a quick note regarding our project...';
+                composeBody.classList.add('filled');
+                composeStatus.textContent = 'Message written. Ready to send!';
+            });
+            document.getElementById('send-email-btn').addEventListener('click', () => {
+                composeStatus.textContent = 'Email sent successfully!';
+                composeStatus.classList.remove('bg-stone-100', 'text-stone-600');
+                composeStatus.classList.add('bg-green-100', 'text-green-800');
+                // Reset fields after a short delay
+                setTimeout(() => {
+                    composeTo.textContent = 'To:';
+                    composeCc.textContent = 'Cc: (Carbon Copy - for visibility)';
+                    composeBcc.textContent = 'Bcc: (Blind Carbon Copy - recipients hidden from others)';
+                    composeSubject.textContent = 'Subject:';
+                    composeBody.textContent = 'Message Body: Type your message here...';
+                    composeTo.classList.remove('filled');
+                    composeCc.classList.remove('filled');
+                    composeBcc.classList.remove('filled');
+                    composeSubject.classList.remove('filled');
+                    composeBody.classList.remove('filled');
+                    composeStatus.textContent = 'Start composing your email.';
+                    composeStatus.classList.remove('bg-green-100', 'text-green-800');
+                    composeStatus.classList.add('bg-stone-100', 'text-stone-600');
+                }, 2000);
+            });
+
+            // --- Receiving Emails Section ---
+            const emailItems = document.querySelectorAll('.email-item');
+            const readingPaneSubject = document.getElementById('reading-pane-subject');
+            const readingPaneSender = document.getElementById('reading-pane-sender');
+            const readingPaneBody = document.getElementById('reading-pane-body');
+            const actionStatus = document.getElementById('action-status');
+            const replyBtn = document.getElementById('reply-btn');
+            const forwardBtn = document.getElementById('forward-btn');
+
+            const emailsData = {
+                '1': {
+                    subject: 'Project Update',
+                    sender: 'John Doe <john.doe@example.com>',
+                    body: 'Hi team,<br><br>Just wanted to give a quick update on the project. We are on track to meet our deadlines. The next phase will involve user testing.<br><br>Best regards,<br>John'
+                },
+                '2': {
+                    subject: 'Special Offer!',
+                    sender: 'Marketing <marketing@promo.com>',
+                    body: 'Dear Valued Customer,<br><br>Don\'t miss out on our exclusive discount this week! Click here to learn more.<br><br>Sincerely,<br>The Marketing Team'
+                },
+                '3': {
+                    subject: 'Meeting Tomorrow',
+                    sender: 'Sarah Lee <sarah.lee@example.com>',
+                    body: 'Reminder: Our meeting is scheduled for 10 AM tomorrow in Conference Room A. Please come prepared to discuss Q3 results.<br><br>Thanks,<br>Sarah'
+                }
+            };
+
+            emailItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const emailId = this.dataset.emailId;
+                    const email = emailsData[emailId];
+
+                    emailItems.forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    this.classList.remove('unread'); // Mark as read
+
+                    readingPaneSubject.textContent = email.subject;
+                    readingPaneSender.textContent = `From: ${email.sender}`;
+                    readingPaneBody.innerHTML = email.body;
+                    actionStatus.textContent = '';
+                });
+            });
+
+            replyBtn.addEventListener('click', () => {
+                actionStatus.textContent = 'Simulating Reply... (A new compose window would open)';
+            });
+            forwardBtn.addEventListener('click', () => {
+                actionStatus.textContent = 'Simulating Forward... (A new compose window would open with original email attached)';
+            });
+
+            // --- Attaching Files Section ---
+            const fileToAttachVisual = document.getElementById('file-to-attach-visual');
+            setupStepNavigator('attaching', 3, (step) => {
+                fileToAttachVisual.classList.remove('attached');
+                fileToAttachVisual.style.opacity = '0'; // Ensure it's hidden initially or reset
+
+                if (step === 3) {
+                    fileToAttachVisual.classList.add('attached');
+                    fileToAttachVisual.style.opacity = '1';
+                }
+            });
+
+            // --- Spam Toggle Section ---
+            document.querySelectorAll('.spam-toggle-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const targetId = this.dataset.toggle;
+                    const content = document.getElementById(targetId);
+                    const arrow = this.querySelector('span:last-child');
+
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        arrow.textContent = '▼';
+                    } else {
+                        content.classList.add('active');
+                        arrow.textContent = '▲';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+     <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Fresh Greens & Earthy Neutrals -->
+    <!-- Application Structure Plan: The SPA is organized into distinct, scrollable sections: an Introduction, followed by "Creating New Folders," "Renaming," "Deleting," and "Recycle Bin/Trash." A sticky navigation bar facilitates quick access to each topic. For procedural tasks (Create, Rename, Delete), a step-by-step interactive module is used, allowing users to reveal instructions incrementally. This sequential, interactive design is chosen to simplify complex procedures, making the learning process more active and digestible for users. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Steps for creating a new folder. -> Goal: Instruct. -> Viz/Method: Step-by-step textual instructions paired with a simple HTML/CSS folder icon that visually "appears" as the folder is created. -> Interaction: "Next Step" button to advance through the procedure. -> Justification: Breaks down the process into manageable, visually reinforced chunks. -> Library/Method: Vanilla JS.
+        - Report Info: Steps for renaming files/folders. -> Goal: Instruct. -> Viz/Method: Step-by-step textual instructions with an HTML/CSS file/folder icon whose "name" dynamically changes. -> Interaction: "Next Step" button. -> Justification: Visualizing the name change enhances understanding of the action. -> Library/Method: Vanilla JS.
+        - Report Info: Steps for deleting files/folders. -> Goal: Instruct. -> Viz/Method: Step-by-step textual instructions with an HTML/CSS file/folder icon that visually "moves" towards a trash icon. -> Interaction: "Next Step" button. -> Justification: Provides a clear visual metaphor for the deletion process. -> Library/Method: Vanilla JS.
+        - Report Info: Purpose and use of Recycle Bin/Trash. -> Goal: Inform. -> Viz/Method: Clear textual explanation with a static Unicode trash can icon. -> Interaction: None. -> Justification: This is a conceptual explanation best conveyed through concise text and a recognizable icon. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .folder-icon-container {
+            width: 100px;
+            height: 80px;
+            position: relative;
+            margin: 20px auto;
+        }
+        .folder-base {
+            width: 100%;
+            height: 80%;
+            background-color: #facc15; /* amber-400 */
+            border-radius: 0 8px 8px 8px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .folder-tab {
+            width: 40%;
+            height: 20%;
+            background-color: #facc15; /* amber-400 */
+            border-radius: 8px 8px 0 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(10%);
+        }
+        .file-icon-container {
+            width: 80px;
+            height: 100px;
+            position: relative;
+            margin: 20px auto;
+            background-color: #d1d5db; /* gray-300 */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #374151; /* gray-700 */
+            overflow: hidden;
+        }
+        .file-icon-container::before {
+            content: '📄';
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        .trash-icon {
+            font-size: 4rem;
+            color: #ef4444; /* red-500 */
+            margin: 20px auto;
+            display: block;
+            text-align: center;
+        }
+        .animated-move {
+            animation: move-to-trash 1s forwards;
+        }
+        @keyframes move-to-trash {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            50% { transform: translateX(50px) translateY(20px); opacity: 0.5; }
+            100% { transform: translateX(100px) translateY(50px); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-emerald-800">File Management Basics</h1>
+            <div class="flex space-x-4 items-center">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-amber-600 hover:bg-amber-700 transition-colors">HOME</a>
+                <a href="#create" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Create</a>
+                <a href="#rename" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Rename</a>
+                <a href="#delete" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Delete</a>
+                <a href="#recycle-bin" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Recycle Bin</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-emerald-800 mb-4">Managing MordernWorld Digital Content</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Learn the essential skills for organizing your computer: creating new folders, renaming files and folders, deleting unwanted items, and understanding the Recycle Bin/Trash.</p>
+        </section>
+
+        <section id="create" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Creating New Folders</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Organize your files by creating new folders. Follow these steps to make a new container for your digital items.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md">
+                    <div id="create-folder-visual" class="folder-icon-container opacity-0 transition-opacity duration-500">
+                        <div class="folder-base"></div>
+                        <div class="folder-tab"></div>
+                    </div>
+                    <p id="create-folder-name" class="text-lg font-semibold text-stone-700 mt-2">New Folder</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="create-steps-container">
+                        <div id="create-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to create a folder?</h4>
+                            <p class="text-stone-700">Click "Next Step" to begin the process.</p>
+                        </div>
+                        <div id="create-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Choose Location</h4>
+                            <p class="text-stone-700">Navigate to the location where you want to create the new folder (e.g., your Documents folder, or the Desktop).</p>
+                        </div>
+                        <div id="create-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Right-Click</h4>
+                            <p class="text-stone-700">Right-click on an empty space within that location. A context menu will appear.</p>
+                        </div>
+                        <div id="create-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 3: Select "New" then "Folder"</h4>
+                            <p class="text-stone-700">From the context menu, hover over "New" and then click "Folder."</p>
+                        </div>
+                        <div id="create-step-4" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 4: Name Your Folder</h4>
+                            <p class="text-stone-700">A new folder icon will appear, typically named "New folder." Type your desired name for the folder and press Enter.</p>
+                        </div>
+                    </div>
+                    <button id="next-create-step" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="rename" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Renaming Files and Folders</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Change the name of a file or folder to better reflect its content or purpose. This process is similar for both.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md">
+                    <div id="rename-item-visual" class="file-icon-container">
+                        <span id="rename-item-name">Old Name.txt</span>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="rename-steps-container">
+                        <div id="rename-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to rename?</h4>
+                            <p class="text-stone-700">Click "Next Step" to learn how to rename.</p>
+                        </div>
+                        <div id="rename-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Select Item</h4>
+                            <p class="text-stone-700">Click once on the file or folder you wish to rename to select it.</p>
+                        </div>
+                        <div id="rename-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Initiate Rename</h4>
+                            <p class="text-stone-700">Right-click the selected item and choose "Rename" from the context menu. Alternatively, click the item once to select it, then click it again (slowly, not a double-click) to enter rename mode.</p>
+                        </div>
+                        <div id="rename-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 3: Type New Name</h4>
+                            <p class="text-stone-700">The current name will be highlighted. Type the new name for your file or folder.</p>
+                        </div>
+                        <div id="rename-step-4" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 4: Confirm</h4>
+                            <p class="text-stone-700">Press Enter or click anywhere outside the name field to confirm the new name. The item will now have its updated name.</p>
+                        </div>
+                    </div>
+                    <button id="next-rename-step" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="delete" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Deleting Files and Folders</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Remove unwanted files or folders from your computer. Deleted items usually go to a temporary holding area.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md">
+                    <div id="delete-item-visual" class="file-icon-container">
+                        <span>Delete Me.txt</span>
+                    </div>
+                    <span class="trash-icon">🗑️</span>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="delete-steps-container">
+                        <div id="delete-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to delete?</h4>
+                            <p class="text-stone-700">Click "Next Step" to learn how to delete items.</p>
+                        </div>
+                        <div id="delete-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Select Item(s)</h4>
+                            <p class="text-stone-700">Click on the file or folder (or multiple items) you want to delete.</p>
+                        </div>
+                        <div id="delete-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Delete Action</h4>
+                            <p class="text-stone-700">Press the Delete key on your keyboard, or right-click the item and choose "Delete" from the context menu.</p>
+                        </div>
+                        <div id="delete-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 3: Confirm (if prompted)</h4>
+                            <p class="text-stone-700">You might be asked to confirm the deletion. Click "Yes" or "OK" to proceed. The item will move to the Recycle Bin/Trash.</p>
+                        </div>
+                    </div>
+                    <button id="next-delete-step" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="recycle-bin" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Using the Recycle Bin / Trash</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">The Recycle Bin (Windows) or Trash (macOS) is a temporary storage area for deleted files and folders, allowing you to recover them if needed.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow-md">
+                    <span class="text-6xl mb-4">🗑️</span>
+                    <h4 class="text-2xl font-semibold text-emerald-800 mb-2">Your Digital Safety Net</h4>
+                    <p class="text-stone-700 text-center">Items deleted from your computer are usually sent here, not immediately erased. This gives you a chance to recover them.</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-3">Key Actions:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-stone-700">
+                        <li>**Open:** Double-click the Recycle Bin/Trash icon on your desktop to view its contents.</li>
+                        <li>**Restore:** Right-click an item inside and choose "Restore" to send it back to its original location.</li>
+                        <li>**Empty:** Right-click the Recycle Bin/Trash icon and choose "Empty Recycle Bin" / "Empty Trash" to permanently delete all contents. Be sure you no longer need these files!</li>
+                        <li>**Shift + Delete (Windows):** Pressing Shift + Delete bypasses the Recycle Bin and permanently deletes files immediately. Use with caution!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to manage step-by-step sections
+            function setupStepNavigator(sectionId, totalSteps, visualCallback, initialVisualState) {
+                let currentStep = 0;
+                const stepsContainer = document.getElementById(`${sectionId}-steps-container`);
+                const nextButton = document.getElementById(`next-${sectionId}-step`);
+                const stepContents = [];
+
+                for (let i = 0; i <= totalSteps; i++) {
+                    const step = document.getElementById(`${sectionId}-step-${i}`);
+                    if (step) {
+                        stepContents.push(step);
+                    }
+                }
+
+                function showStep(stepIndex) {
+                    stepContents.forEach((step, index) => {
+                        step.classList.remove('active');
+                        if (index === stepIndex) {
+                            step.classList.add('active');
+                        }
+                    });
+                    if (visualCallback) {
+                        visualCallback(stepIndex);
+                    }
+                    nextButton.textContent = (stepIndex === totalSteps) ? 'Restart' : 'Next Step';
+                }
+
+                nextButton.addEventListener('click', function () {
+                    currentStep++;
+                    if (currentStep > totalSteps) {
+                        currentStep = 0; // Loop back to start
+                    }
+                    showStep(currentStep);
+                });
+
+                showStep(currentStep); // Initialize first step
+            }
+
+            // --- Create Folder Section ---
+            const createFolderVisual = document.getElementById('create-folder-visual');
+            const createFolderName = document.getElementById('create-folder-name');
+            setupStepNavigator('create', 4, (step) => {
+                if (step === 4) {
+                    createFolderVisual.classList.add('opacity-100');
+                    createFolderName.textContent = 'My New Folder';
+                } else if (step === 0) {
+                    createFolderVisual.classList.remove('opacity-100');
+                    createFolderName.textContent = 'New Folder';
+                } else {
+                    createFolderVisual.classList.remove('opacity-100');
+                    createFolderName.textContent = 'New Folder';
+                }
+            });
+
+            // --- Rename Section ---
+            const renameItemVisual = document.getElementById('rename-item-visual');
+            const renameItemName = document.getElementById('rename-item-name');
+            setupStepNavigator('rename', 4, (step) => {
+                if (step === 3 || step === 4) {
+                    renameItemName.textContent = 'Renamed File.txt';
+                } else {
+                    renameItemName.textContent = 'Old Name.txt';
+                }
+            });
+
+            // --- Delete Section ---
+            const deleteItemVisual = document.getElementById('delete-item-visual');
+            setupStepNavigator('delete', 3, (step) => {
+                if (step === 3) {
+                    deleteItemVisual.classList.add('animated-move');
+                } else {
+                    deleteItemVisual.classList.remove('animated-move');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+ <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

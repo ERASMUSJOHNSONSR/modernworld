@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The static training plan is restructured into a dynamic single-page application. The core idea is to transform passive reading into active engagement. A tab-based navigation is used for the modules, allowing users to focus on one area at a time without overwhelming scrolling. This is more intuitive than a long document. Key interactions include a checklist for lessons which updates a master progress bar, providing instant feedback and a sense of accomplishment. A doughnut chart visualizes the lesson distribution, offering a quick data-driven overview of the course structure. This design was chosen to make the plan feel like a personalized tool rather than a static document, enhancing user motivation and clarity for beginners. -->
+    <!-- Visualization & Content Choices: 
+        Report Info: 6 Modules with multiple lessons each.
+        Goal: Organize/Navigate.
+        Viz/Presentation: Tabbed interface for modules. HTML/Tailwind styled cards for lessons.
+        Interaction: User clicks a tab to show the relevant lessons.
+        Justification: Breaks down the plan into manageable chunks, preventing information overload. Intuitive and common UI pattern.
+        Library/Method: HTML/Tailwind + Vanilla JS.
+
+        Report Info: List of lessons within each module.
+        Goal: Engage/Track Progress.
+        Viz/Presentation: Checkboxes next to each lesson item, a master progress bar.
+        Interaction: Clicking a checkbox marks a lesson as "complete" and updates the progress bar's width and percentage text.
+        Justification: Gamifies the learning plan, provides tangible feedback, and increases user motivation.
+        Library/Method: HTML/Tailwind + Vanilla JS.
+
+        Report Info: The overall structure of the course (number of lessons per module).
+        Goal: Inform/Compare.
+        Viz/Presentation: Doughnut Chart.
+        Interaction: Hovering over a segment shows the module name and lesson count.
+        Justification: Provides a quick, visual summary of the course content distribution, which is not immediately obvious from the text-only report. Adds a data visualization element.
+        Library/Method: Chart.js (Canvas).
+        
+        Report Info: Assessment methods and Resources.
+        Goal: Inform.
+        Viz/Presentation: A two-column grid layout with icons.
+        Interaction: None needed, this is static informational content.
+        Justification: Clearly separates supplementary information from the core curriculum, improving scannability.
+        Library/Method: HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-[#fdfbf7] text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="text-center mb-10">
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900"><a href="index.html" class="hover:text-amber-600 underline"><img src="ModernWorld Logo.png" alt="ModernWorld Logo" style="display:inline;vertical-align:middle;height:2.5em;width:auto;margin-right:0.5em;background-color:#fdfbf7;">ModernWorld Online Computer Training</a></h1>
+            <p class="mt-2 text-lg text-gray-600">Your journey to digital literacy starts here. Track your progress as you learn.</p>
+        </header>
+
+
+    
+<footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

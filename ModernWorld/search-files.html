@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is structured into logical sections: an Introduction, "Why Search?", "How to Search (Windows)", "How to Search (macOS)", and "Search Tips". A sticky navigation bar allows users to jump between these sections. The "How to Search" sections are highly interactive, featuring step-by-step instructions paired with animated visual simulations of the OS search interface. This design aims to make a procedural topic engaging and easy to understand through direct visual feedback and guided interaction. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Importance/benefits of searching. -> Goal: Inform. -> Viz/Method: A concise list of benefits with relevant Unicode icons. -> Interaction: None. -> Justification: A simple list is effective for quickly conveying key advantages. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Steps for Windows OS search. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated Windows taskbar with a search icon/bar. JavaScript animates typing into the search bar and showing a simplified results area. -> Interaction: "Next Step" button to advance through the process, triggering visual changes. -> Justification: Visualizing the OS interface and interaction makes the instructions much clearer and more memorable than text alone. -> Library/Method: Vanilla JS for animation and step management.
+        - Report Info: Steps for macOS OS search (Spotlight). -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated macOS desktop. JavaScript animates the appearance of the Spotlight search bar and typing. -> Interaction: "Next Step" button to advance. -> Justification: Provides consistent interactive instruction for macOS users. -> Library/Method: Vanilla JS for animation and step management.
+        - Report Info: Tips for effective searching. -> Goal: Inform/Advise. -> Viz/Method: A bulleted list of practical tips. -> Interaction: None. -> Justification: A list is ideal for presenting actionable advice concisely. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .os-sim-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 250px;
+            background-color: #e0e7e9; /* Light blue-gray for screen */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* For taskbar at bottom */
+        }
+        .windows-taskbar {
+            height: 50px;
+            background-color: #cbd5e1; /* slate-300 */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+        .windows-search-box {
+            background-color: #ffffff;
+            border-radius: 4px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            margin-left: 10px;
+            color: #4b5563; /* gray-700 */
+            font-size: 0.9rem;
+            position: relative;
+            height: 30px;
+        }
+        .windows-search-input {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .windows-search-results {
+            position: absolute;
+            bottom: 50px; /* Above taskbar */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: all 0.5s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .windows-search-results.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .mac-desktop {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #a7d9f7; /* Light blue for desktop */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .mac-spotlight-bar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            padding: 10px 15px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .mac-spotlight-input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 1.1rem;
+            color: #374151; /* gray-700 */
+        }
+        .mac-spotlight-results {
+            position: absolute;
+            top: calc(50% + 40px); /* Below search bar */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease-out;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+        .mac-spotlight-results.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .typing-effect::after {
+            content: '|';
+            animation: blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { border-right-color: transparent }
+            50% { border-right-color: #4b5563; }
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-emerald-800">File Search Guide</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-cyan-600 hover:bg-cyan-700 transition-colors">HOME</a>
+                <a href="#intro" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Intro</a>
+                <a href="#why-search" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Why Search?</a>
+                <a href="#windows-search" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Windows Search</a>
+                <a href="#macos-search" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">macOS Search</a>
+                <a href="#tips" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Tips</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-emerald-800 mb-4">ModernWorld Mastering File Search</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Your computer holds countless files. Learning how to effectively search for them is a crucial skill for productivity and organization. This guide will show you how.</p>
+        </section>
+
+        <section id="why-search" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Why Use the Search Function?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Searching for files helps you quickly locate documents, photos, applications, and more, saving you time and frustration.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-6 bg-stone-50 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <span class="text-4xl mb-3">⏱️</span>
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-2">Save Time</h4>
+                    <p class="text-stone-700">Quickly find files without manually browsing through folders.</p>
+                </div>
+                <div class="p-6 bg-stone-50 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <span class="text-4xl mb-3">🔍</span>
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-2">Locate Lost Files</h4>
+                    <p class="text-stone-700">Retrieve files you might have misplaced or forgotten where you saved.</p>
+                </div>
+                <div class="p-6 bg-stone-50 rounded-lg shadow-md flex flex-col items-center text-center">
+                    <span class="text-4xl mb-3">✨</span>
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-2">Boost Productivity</h4>
+                    <p class="text-stone-700">Work more efficiently by accessing what you need instantly.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="windows-search" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">How to Search in Windows</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Windows provides a powerful search bar directly on your taskbar or in the Start Menu. Follow these steps to find your files.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="os-sim-container">
+                    <div id="windows-search-results" class="windows-search-results">
+                        <p class="font-semibold text-stone-700 mb-2">Top Result:</p>
+                        <div class="bg-emerald-100 p-2 rounded-md mb-2">📄 My Important Document.docx</div>
+                        <p class="font-semibold text-stone-700 mb-2">Other Results:</p>
+                        <div class="bg-stone-100 p-2 rounded-md mb-1">📁 Project Files</div>
+                        <div class="bg-stone-100 p-2 rounded-md">🖼️ document_photo.jpg</div>
+                    </div>
+                    <div class="windows-taskbar">
+                        <span class="text-2xl text-stone-700 mr-4">⊞</span> <!-- Windows icon -->
+                        <div id="windows-search-box" class="windows-search-box">
+                            <span class="text-stone-500 mr-2">🔍</span>
+                            <span id="windows-search-input" class="windows-search-input"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="windows-search-steps-container">
+                        <div id="windows-search-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to search in Windows?</h4>
+                            <p class="text-stone-700">Click "Next Step" to begin the simulation.</p>
+                        </div>
+                        <div id="windows-search-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Click Search Bar</h4>
+                            <p class="text-stone-700">Click the "Type here to search" box or the magnifying glass icon on your taskbar.</p>
+                        </div>
+                        <div id="windows-search-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Type Your Query</h4>
+                            <p class="text-stone-700">Start typing the name of the file, folder, or application you're looking for.</p>
+                        </div>
+                        <div id="windows-search-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 3: View Results</h4>
+                            <p class="text-stone-700">As you type, search results will appear. Click on the desired item to open it.</p>
+                        </div>
+                    </div>
+                    <button id="next-windows-search-step" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="macos-search" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">How to Search in macOS (Spotlight)</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">macOS uses Spotlight Search, a powerful tool for finding files, apps, and even information on the web. It's quick and easy to access.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="os-sim-container">
+                    <div class="mac-desktop">
+                        <div id="mac-spotlight-bar" class="mac-spotlight-bar">
+                            <span class="text-stone-500 mr-2">🔍</span>
+                            <input type="text" id="mac-spotlight-input" class="mac-spotlight-input" placeholder="Spotlight Search">
+                        </div>
+                        <div id="mac-spotlight-results" class="mac-spotlight-results">
+                            <p class="font-semibold text-stone-700 mb-2">Top Hit:</p>
+                            <div class="bg-emerald-100 p-2 rounded-md mb-2">📄 Meeting Notes.pages</div>
+                            <p class="font-semibold text-stone-700 mb-2">Documents:</p>
+                            <div class="bg-stone-100 p-2 rounded-md mb-1">📁 Project X</div>
+                            <div class="bg-stone-100 p-2 rounded-md">🖼️ Vacation Photos</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <div id="macos-search-steps-container">
+                        <div id="macos-search-step-0" class="step-content active">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Ready to use Spotlight?</h4>
+                            <p class="text-stone-700">Click "Next Step" to start the simulation.</p>
+                        </div>
+                        <div id="macos-search-step-1" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 1: Activate Spotlight</h4>
+                            <p class="text-stone-700">Press <kbd class="font-mono bg-stone-200 px-1 rounded">Command (⌘) + Spacebar</kbd> on your keyboard. The Spotlight search bar will appear.</p>
+                        </div>
+                        <div id="macos-search-step-2" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 2: Type Your Query</h4>
+                            <p class="text-stone-700">Start typing what you're looking for directly into the search bar.</p>
+                        </div>
+                        <div id="macos-search-step-3" class="step-content">
+                            <h4 class="text-xl font-semibold text-emerald-800 mb-2">Step 3: View Results</h4>
+                            <p class="text-stone-700">Spotlight will show instant results. Use arrow keys to navigate or click to open.</p>
+                        </div>
+                    </div>
+                    <button id="next-macos-search-step" class="mt-4 bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Next Step</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tips" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Pro Tips for Effective Searching</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Refine your search queries to find exactly what you need, even faster!</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-3xl mx-auto">
+                <ul class="list-disc list-inside text-stone-700 space-y-4">
+                    <li>
+                        <span class="font-semibold text-emerald-800">Use Keywords:</span> Be specific with your search terms. Instead of "picture," try "vacation photo 2023."
+                    </li>
+                    <li>
+                        <span class="font-semibold text-emerald-800">Include File Extensions:</span> If you know the file type, add its extension (e.g., "report.pdf" or "budget.xlsx").
+                    </li>
+                    <li>
+                        <span class="font-semibold text-emerald-800">Search by Content:</span> Modern search functions can often look inside documents for keywords, not just in their names.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-emerald-800">Filter Results:</span> Most OS search interfaces allow you to filter by type (documents, images, videos), date modified, or size. Look for options like "Kind," "Date," or "Size."
+                    </li>
+                    <li>
+                        <span class="font-semibold text-emerald-800">Wildcards (Advanced):</span> Use `*` to represent any characters (e.g., `report*` finds "report", "reports", "reporting").
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Generic step navigator function
+            function setupStepNavigator(sectionId, totalSteps, visualCallback) {
+                let currentStep = 0;
+                const stepsContainer = document.getElementById(`${sectionId}-steps-container`);
+                const nextButton = document.getElementById(`next-${sectionId}-step`);
+                const stepContents = [];
+
+                for (let i = 0; i <= totalSteps; i++) {
+                    const step = document.getElementById(`${sectionId}-step-${i}`);
+                    if (step) {
+                        stepContents.push(step);
+                    }
+                }
+
+                function showStep(stepIndex) {
+                    stepContents.forEach((step, index) => {
+                        step.classList.remove('active');
+                        if (index === stepIndex) {
+                            step.classList.add('active');
+                        }
+                    });
+                    if (visualCallback) {
+                        visualCallback(stepIndex);
+                    }
+                    nextButton.textContent = (stepIndex === totalSteps) ? 'Restart Simulation' : 'Next Step';
+                }
+
+                nextButton.addEventListener('click', function () {
+                    currentStep++;
+                    if (currentStep > totalSteps) {
+                        currentStep = 0; // Loop back to start
+                    }
+                    showStep(currentStep);
+                });
+
+                showStep(currentStep); // Initialize first step
+            }
+
+            // --- Windows Search Simulation ---
+            const windowsSearchInput = document.getElementById('windows-search-input');
+            const windowsSearchResults = document.getElementById('windows-search-results');
+            const windowsSearchBox = document.getElementById('windows-search-box');
+            let windowsSearchText = "My Document";
+            let windowsTypingIndex = 0;
+            let windowsTypingInterval;
+
+            function startWindowsTyping() {
+                windowsSearchInput.classList.add('typing-effect');
+                windowsTypingIndex = 0;
+                windowsSearchInput.textContent = '';
+                clearInterval(windowsTypingInterval);
+                windowsTypingInterval = setInterval(() => {
+                    if (windowsTypingIndex < windowsSearchText.length) {
+                        windowsSearchInput.textContent += windowsSearchText.charAt(windowsTypingIndex);
+                        windowsTypingIndex++;
+                    } else {
+                        clearInterval(windowsTypingInterval);
+                        windowsSearchInput.classList.remove('typing-effect');
+                    }
+                }, 100);
+            }
+
+            setupStepNavigator('windows-search', 3, (step) => {
+                windowsSearchInput.style.opacity = '0';
+                windowsSearchResults.classList.remove('active');
+                windowsSearchBox.style.backgroundColor = '#ffffff'; // Reset background
+
+                if (step === 1) {
+                    // Click search bar
+                    windowsSearchBox.style.backgroundColor = '#e2e8f0'; // Simulate clicked state
+                } else if (step === 2) {
+                    // Type query
+                    windowsSearchInput.style.opacity = '1';
+                    startWindowsTyping();
+                } else if (step === 3) {
+                    // View results
+                    windowsSearchInput.style.opacity = '1';
+                    windowsSearchInput.textContent = windowsSearchText; // Ensure full text
+                    windowsSearchResults.classList.add('active');
+                }
+            });
+
+            // --- macOS Search Simulation ---
+            const macSpotlightBar = document.getElementById('mac-spotlight-bar');
+            const macSpotlightInput = document.getElementById('mac-spotlight-input');
+            const macSpotlightResults = document.getElementById('mac-spotlight-results');
+            let macSearchText = "Meeting Notes";
+            let macTypingIndex = 0;
+            let macTypingInterval;
+
+            function startMacTyping() {
+                macSpotlightInput.classList.add('typing-effect');
+                macTypingIndex = 0;
+                macSpotlightInput.value = '';
+                clearInterval(macTypingInterval);
+                macTypingInterval = setInterval(() => {
+                    if (macTypingIndex < macSearchText.length) {
+                        macSpotlightInput.value += macSearchText.charAt(macTypingIndex);
+                        macTypingIndex++;
+                    } else {
+                        clearInterval(macTypingInterval);
+                        macSpotlightInput.classList.remove('typing-effect');
+                    }
+                }, 100);
+            }
+
+            setupStepNavigator('macos-search', 3, (step) => {
+                macSpotlightBar.style.opacity = '0';
+                macSpotlightResults.classList.remove('active');
+                macSpotlightInput.value = ''; // Clear input
+
+                if (step === 1) {
+                    // Activate Spotlight
+                    macSpotlightBar.style.opacity = '1';
+                } else if (step === 2) {
+                    // Type query
+                    macSpotlightBar.style.opacity = '1';
+                    startMacTyping();
+                } else if (step === 3) {
+                    // View results
+                    macSpotlightBar.style.opacity = '1';
+                    macSpotlightInput.value = macSearchText; // Ensure full text
+                    macSpotlightResults.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

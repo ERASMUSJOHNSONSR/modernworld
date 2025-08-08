@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with-green Accent -->
+    <!-- Application Structure Plan: The SPA is structured into distinct, scrollable sections: "Introduction," "What to Share Online," "Recognizing Secure Sites (HTTPS)," and "Key Takeaways." A sticky navigation bar allows quick jumps between these topics. The "What to Share Online" section uses expandable cards for different information categories. The "Recognizing Secure Sites" section features a simulated browser address bar where users click on the "HTTPS" part or a padlock icon to reveal explanations. This design prioritizes active learning and visual reinforcement to make abstract security concepts tangible and actionable. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Introduction to protecting personal information. -> Goal: Inform. -> Viz/Method: Concise textual explanation with a privacy icon (Unicode). -> Interaction: None. -> Justification: Simple and direct for an overview. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: What types of information to share online. -> Goal: Inform/Advise. -> Viz/Method: Expandable sections (HTML/CSS toggles) for "Generally Safe to Share," "Be Cautious," and "Never Share." Each section reveals specific examples and advice. -> Interaction: Clickable headers toggle content visibility. -> Justification: Allows users to control information density and focus on specific categories of data. -> Library/Method: HTML/CSS with Tailwind, Vanilla JS for toggles.
+        - Report Info: Recognizing secure sites (HTTPS). -> Goal: Instruct/Educate. -> Viz/Method: A simulated browser address bar (HTML/CSS) displaying a URL with clickable "HTTPS" and a clickable padlock icon. An adjacent info panel updates. -> Interaction: Clicking on "HTTPS" or the padlock highlights the element and updates the info panel with an explanation. -> Justification: Provides a direct, interactive way to learn how to identify secure connections in a realistic context. -> Library/Method: Vanilla JS.
+        - Report Info: General best practices for protecting personal info. -> Goal: Advise. -> Viz/Method: A clear, bulleted list of actionable tips. -> Interaction: None. -> Justification: A concise list is effective for conveying practical advice. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .toggle-header {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #f0f9ff; /*-green-50 */
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #1e40af; /*-green-800 */
+            transition: background-color 0.2s ease;
+        }
+        .toggle-header:hover {
+            background-color: #e0f2fe; /*-green-100 */
+        }
+        .toggle-content {
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e0f2fe;
+            border-top: none;
+            display: none;
+        }
+        .toggle-content.active {
+            display: block;
+        }
+        .browser-address-bar-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+        .url-segment {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-family: 'Inter', monospace;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+        .url-segment:hover {
+            background-color: #e0f2fe; /*-green-50 */
+        }
+        .url-segment.active {
+            background-color: #bfdbfe; /*-green-200 */
+            color: #1e40af; /*-green-800 */
+            font-weight: 600;
+        }
+        .padlock-icon {
+            font-size: 1.2rem;
+            color: #22c55e; /* green-500 */
+            margin-right: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .padlock-icon:hover {
+            transform: scale(1.1);
+        }
+        .security-info-panel {
+            background-color: #f8fafc; /* light-green-gray */
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 120px;
+        }
+        .security-info-panel p {
+            color: #334155;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-green-800">Online Privacy</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-green-600 font-medium">Intro</a>
+                <a href="#what-to-share" class="nav-link text-stone-600 hover:text-green-600 font-medium">What to Share</a>
+                <a href="#secure-sites" class="nav-link text-stone-600 hover:text-green-600 font-medium">Secure Sites</a>
+                <a href="#takeaways" class="nav-link text-stone-600 hover:text-green-600 font-medium">Tips</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-green-800 mb-4">Protecting ModernWorld Personal Information Online</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">In the digital age, safeguarding your personal data is more important than ever. Learn what information to share, and how to identify safe online environments.</p>
+            <span class="text-7xl mt-8 block">🔒</span>
+        </section>
+
+        <section id="what-to-share" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">What Information Should You Share Online?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Not all information is created equal. Be mindful of what you post or provide on websites and social media.</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-4">
+                    <div class="toggle-header" data-toggle="safe-to-share">
+                        <span>Generally Safe to Share (with caution)</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="safe-to-share" class="toggle-content">
+                        <p class="text-stone-700 mb-2">This information is often public or necessary for certain online interactions, but still requires discretion:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Public Name:** Your first name or a chosen username for public profiles.</li>
+                            <li>**General Interests:** Hobbies, favorite books, movies (on social media).</li>
+                            <li>**Non-Specific Location:** Your city or general region, not your exact address.</li>
+                            <li>**Public Opinions:** Your thoughts on non-sensitive topics.</li>
+                        </ul>
+                        <p class="text-stone-700 mt-2 font-semibold text-green-800">Always remember: Once it's online, it's hard to take back. Think before you post!</p>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="toggle-header" data-toggle="be-cautious">
+                        <span>Be Very Cautious (Share only when necessary and trusted)</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="be-cautious" class="toggle-content">
+                        <p class="text-stone-700 mb-2">This information can be used to identify or target you. Share only with trusted services and when explicitly required:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Full Name:** On professional sites or for official transactions.</li>
+                            <li>**Email Address:** For account creation or trusted newsletters. Expect some spam.</li>
+                            <li>**Phone Number:** For two-factor authentication or verified contacts.</li>
+                            <li>**Date of Birth:** Often used for identity verification; share minimally.</li>
+                            <li>**Photos:** Be mindful of what's in the background, who else is in the photo, and location tags.</li>
+                        </ul>
+                        <p class="text-stone-700 mt-2 font-semibold text-green-800">Verify the legitimacy of any request for this information before providing it.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="toggle-header" data-toggle="never-share">
+                        <span>Never Share (Keep private at all costs)</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="never-share" class="toggle-content">
+                        <p class="text-stone-700 mb-2">This information is highly sensitive and can lead to identity theft, financial fraud, or other serious security risks. Never share it publicly or with unverified sources:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4 space-y-1">
+                            <li>**Passwords:** Never share your passwords with anyone, ever.</li>
+                            <li>**Bank Account Numbers / Credit Card Details:** Only enter these on secure, trusted payment pages.</li>
+                            <li>**Social Security Number (or national ID equivalent):** Highly sensitive, rarely needed online.</li>
+                            <li>**Exact Home Address:** Avoid sharing publicly.</li>
+                            <li>**Private Health Information:** Keep medical details strictly confidential.</li>
+                            <li>**Login Credentials:** For any online service.</li>
+                        </ul>
+                        <p class="text-stone-700 mt-2 font-semibold text-green-800">Scammers actively try to trick you into revealing these details. Be extremely vigilant.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="secure-sites" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Recognizing Secure Sites (HTTPS)</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">When you share personal or financial information online, it's crucial to ensure the website is secure. Look for these indicators in your browser's address bar.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="browser-address-bar-sim">
+                    <span id="padlock-icon" class="padlock-icon">🔒</span>
+                    <span id="https-prefix" class="url-segment mr-0.5">https://</span><span class="url-segment">www.</span><span class="url-segment">secure-website</span><span class="url-segment">.com</span><span class="url-segment">/login</span>
+                </div>
+                <div class="security-info-panel" id="security-info-panel">
+                    <h4 class="text-xl font-semibold text-green-800 mb-2">What Makes a Site Secure?</h4>
+                    <p id="info-default-secure" class="text-stone-700">Click on the "https://" or the padlock icon in the address bar to learn about secure websites.</p>
+                    <p id="info-https" class="text-stone-700 hidden">**HTTPS (Hypertext Transfer Protocol Secure):** This means the connection between your browser and the website is encrypted. Any data you send (like passwords or credit card numbers) is scrambled, making it unreadable to anyone trying to intercept it.</p>
+                    <p id="info-padlock" class="text-stone-700 hidden">**Padlock Icon:** A closed padlock icon (🔒) in the address bar is a visual indicator that the site is using HTTPS and has a valid security certificate. It confirms that the connection is secure and the site's identity has been verified.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="takeaways" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Key Takeaways for Protecting Your Information</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Be proactive and vigilant about your online privacy and security.</p>
+            </div>
+            <div class="bg-stone-100 p-8 rounded-lg shadow-md max-w-3xl mx-auto">
+                <ul class="list-disc list-inside text-stone-700 space-y-4">
+                    <li>
+                        <span class="font-semibold text-green-800">Think Before You Share:</span> Assume anything you post online could become public and permanent.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Verify Website Security:</span> Always check for "https://" and the padlock icon before entering sensitive information.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Use Strong, Unique Passwords:</span> For every account.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Be Wary of Phishing:</span> Don't click suspicious links or open unexpected attachments.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Keep Software Updated:</span> Operating systems, browsers, and apps often release security patches.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-green-800">Review Privacy Settings:</span> On social media and other online services, regularly check and adjust your privacy settings.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Toggle Content Sections (What to Share) ---
+            document.querySelectorAll('.toggle-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const targetId = this.dataset.toggle;
+                    const content = document.getElementById(targetId);
+                    const arrow = this.querySelector('span:last-child');
+
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        arrow.textContent = '▼';
+                    } else {
+                        content.classList.add('active');
+                        arrow.textContent = '▲';
+                    }
+                });
+            });
+
+            // --- Secure Sites Simulation ---
+            const httpsPrefix = document.getElementById('https-prefix');
+            const padlockIcon = document.getElementById('padlock-icon');
+            const securityInfoPanel = document.getElementById('security-info-panel');
+            const infoDefaultSecure = document.getElementById('info-default-secure');
+            const infoHttps = document.getElementById('info-https');
+            const infoPadlock = document.getElementById('info-padlock');
+
+            function clearSecurityInfo() {
+                httpsPrefix.classList.remove('active');
+                padlockIcon.classList.remove('active');
+                infoDefaultSecure.classList.add('hidden');
+                infoHttps.classList.add('hidden');
+                infoPadlock.classList.add('hidden');
+            }
+
+            httpsPrefix.addEventListener('click', () => {
+                clearSecurityInfo();
+                httpsPrefix.classList.add('active');
+                infoHttps.classList.remove('hidden');
+            });
+
+            padlockIcon.addEventListener('click', () => {
+                clearSecurityInfo();
+                padlockIcon.classList.add('active');
+                infoPadlock.classList.remove('hidden');
+            });
+
+            // Initialize with default info
+            infoDefaultSecure.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
+
+
+
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

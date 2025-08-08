@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MordernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Fresh Greens & Earthy Neutrals -->
+    <!-- Application Structure Plan: The SPA is structured into three main thematic sections: "Introduction," "Understanding the Grid," and "Basic Data Entry." A sticky header with navigation links allows quick jumps between sections. The "Understanding the Grid" section features a simulated spreadsheet grid where users can click on cells, row headers, or column headers to highlight them and display an explanatory definition in an adjacent panel. The "Basic Data Entry" section includes a smaller, interactive grid where users can select a cell and then "type" or "clear" data, visually updating the cell's content. This design facilitates a progressive understanding of spreadsheet concepts through direct visual feedback and guided interaction. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Definition of a spreadsheet. -> Goal: Inform. -> Viz/Method: Textual explanation with a spreadsheet icon (Unicode). -> Interaction: None. -> Justification: Concise text and a recognizable icon are effective for initial definition. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Cells, rows, and columns definitions. -> Goal: Inform/Explain. -> Viz/Method: A simulated spreadsheet grid (HTML/CSS) with distinct clickable areas for cells, row headers, and column headers. -> Interaction: Clicking a grid component highlights it and updates an info panel with its definition. -> Justification: Direct interaction with the visual components makes the abstract concepts concrete and easy to grasp. -> Library/Method: Vanilla JS.
+        - Report Info: Basic data entry. -> Goal: Instruct/Demonstrate. -> Viz/Method: A smaller, interactive simulated spreadsheet grid. -> Interaction: Users click a cell to select it, then use "Type Data" or "Clear Cell" buttons to dynamically modify the selected cell's content. -> Justification: Simulating the data entry process provides immediate visual feedback on how data populates cells. -> Library/Method: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .spreadsheet-grid {
+            display: grid;
+            grid-template-columns: 40px repeat(4, 1fr); /* Column headers + 4 data columns */
+            grid-template-rows: 30px repeat(4, 1fr); /* Row headers + 4 data rows */
+            max-width: 500px;
+            margin: 20px auto;
+            border: 1px solid #cbd5e1; /* slate-300 */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .grid-cell, .grid-header {
+            border: 1px solid #e2e8f0; /* slate-200 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            font-size: 0.9rem;
+            color: #334155; /* slate-700 */
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .grid-header {
+            background-color: #f0f9ff; /* blue-50 */
+            font-weight: 600;
+            color: #1e40af; /* blue-800 */
+        }
+        .grid-top-left {
+            background-color: #f8fafc; /* light blue-gray */
+            border: none;
+        }
+        .grid-cell.highlighted, .grid-header.highlighted {
+            background-color: #bfdbfe; /* blue-200 */
+            border-color: #60a5fa; /* blue-400 */
+        }
+        .grid-cell.selected {
+            background-color: #93c5fd; /* blue-300 */
+            border-color: #2563eb; /* blue-600 */
+            font-weight: 600;
+        }
+        .info-panel-item {
+            display: none;
+        }
+        .info-panel-item.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+                <span class="text-xl font-bold text-lime-600">Spreadsheets</span>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-lime-600 hover:bg-lime-700 transition-colors">HOME</a>
+                    <a href="#basics" class="text-stone-600 hover:text-lime-600 transition-colors">Basics</a>
+                    <a href="#cells" class="text-stone-600 hover:text-lime-600 transition-colors">Cells</a>
+                    <a href="#formulas" class="text-stone-600 hover:text-lime-600 transition-colors">Formulas</a>
+                    <a href="#charts" class="text-stone-600 hover:text-lime-600 transition-colors">Charts</a>
+                </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-emerald-800 mb-4">ModernWorld Introduction to Spreadsheets</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Spreadsheets are powerful tools for organizing, analyzing, and storing data in a structured, tabular format. They are widely used for everything from budgeting to complex data analysis.</p>
+            <span class="text-7xl mt-8 block">📊</span>
+        </section>
+
+        <section id="grid-structure" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Understanding Cells, Rows, and Columns</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A spreadsheet is essentially a grid made up of individual components. Click on the different parts of the simulated spreadsheet below to learn about them.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="spreadsheet-grid" id="main-spreadsheet-grid">
+                    <div class="grid-top-left"></div>
+                    <div class="grid-header" data-type="column" data-label="A">A</div>
+                    <div class="grid-header" data-type="column" data-label="B">B</div>
+                    <div class="grid-header" data-type="column" data-label="C">C</div>
+                    <div class="grid-header" data-type="column" data-label="D">D</div>
+
+                    <div class="grid-header" data-type="row" data-label="1">1</div>
+                    <div class="grid-cell" data-cell="A1"></div>
+                    <div class="grid-cell" data-cell="B1"></div>
+                    <div class="grid-cell" data-cell="C1"></div>
+                    <div class="grid-cell" data-cell="D1"></div>
+
+                    <div class="grid-header" data-type="row" data-label="2">2</div>
+                    <div class="grid-cell" data-cell="A2"></div>
+                    <div class="grid-cell" data-cell="B2"></div>
+                    <div class="grid-cell" data-cell="C2"></div>
+                    <div class="grid-cell" data-cell="D2"></div>
+
+                    <div class="grid-header" data-type="row" data-label="3">3</div>
+                    <div class="grid-cell" data-cell="A3"></div>
+                    <div class="grid-cell" data-cell="B3"></div>
+                    <div class="grid-cell" data-cell="C3"></div>
+                    <div class="grid-cell" data-cell="D3"></div>
+
+                    <div class="grid-header" data-type="row" data-label="4">4</div>
+                    <div class="grid-cell" data-cell="A4"></div>
+                    <div class="grid-cell" data-cell="B4"></div>
+                    <div class="grid-cell" data-cell="C4"></div>
+                    <div class="grid-cell" data-cell="D4"></div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[250px]">
+                    <div id="grid-info-default" class="info-panel-item active">
+                        <h4 class="text-xl font-semibold text-emerald-800 mb-2">Explore the Grid</h4>
+                        <p class="text-stone-700">Click on a column header (A, B, C, D), a row header (1, 2, 3, 4), or an individual cell to learn more about it.</p>
+                    </div>
+                    <div id="grid-info-cell" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-emerald-800 mb-2">Cell</h4>
+                        <p class="text-stone-700">A cell is the smallest unit in a spreadsheet, where you enter individual pieces of data. Each cell has a unique address (e.g., A1, B3).</p>
+                    </div>
+                    <div id="grid-info-row" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-emerald-800 mb-2">Row</h4>
+                        <p class="text-stone-700">A row is a horizontal series of cells, identified by a number (e.g., Row 1, Row 2). Rows typically contain related records or entries.</p>
+                    </div>
+                    <div id="grid-info-column" class="info-panel-item">
+                        <h4 class="text-xl font-semibold text-emerald-800 mb-2">Column</h4>
+                        <p class="text-stone-700">A column is a vertical series of cells, identified by a letter (e.g., Column A, Column B). Columns often represent different categories or types of data.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="data-entry" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">Basic Data Entry</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Entering data into a spreadsheet is simple. Just select a cell and start typing! Use the simulator below to practice.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="spreadsheet-grid" id="data-entry-grid">
+                    <div class="grid-top-left"></div>
+                    <div class="grid-header">A</div>
+                    <div class="grid-header">B</div>
+                    <div class="grid-header">C</div>
+                    <div class="grid-header">D</div>
+
+                    <div class="grid-header">1</div>
+                    <div class="grid-cell" data-cell="A1"></div>
+                    <div class="grid-cell" data-cell="B1"></div>
+                    <div class="grid-cell" data-cell="C1"></div>
+                    <div class="grid-cell" data-cell="D1"></div>
+
+                    <div class="grid-header">2</div>
+                    <div class="grid-cell" data-cell="A2"></div>
+                    <div class="grid-cell" data-cell="B2"></div>
+                    <div class="grid-cell" data-cell="C2"></div>
+                    <div class="grid-cell" data-cell="D2"></div>
+
+                    <div class="grid-header">3</div>
+                    <div class="grid-cell" data-cell="A3"></div>
+                    <div class="grid-cell" data-cell="B3"></div>
+                    <div class="grid-cell" data-cell="C3"></div>
+                    <div class="grid-cell" data-cell="D3"></div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-3" id="data-entry-status">Click a cell to select it.</h4>
+                    <div class="flex space-x-2 mt-4">
+                        <button id="type-data-btn" class="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700 transition">Type Data</button>
+                        <button id="clear-cell-btn" class="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition">Clear Cell</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Grid Structure Section ---
+            const mainGridCells = document.querySelectorAll('#main-spreadsheet-grid .grid-cell');
+            const mainGridHeaders = document.querySelectorAll('#main-spreadsheet-grid .grid-header');
+            const gridInfoDefault = document.getElementById('grid-info-default');
+            const gridInfoCell = document.getElementById('grid-info-cell');
+            const gridInfoRow = document.getElementById('grid-info-row');
+            const gridInfoColumn = document.getElementById('grid-info-column');
+
+            function clearGridHighlights() {
+                mainGridCells.forEach(cell => cell.classList.remove('highlighted'));
+                mainGridHeaders.forEach(header => header.classList.remove('highlighted'));
+                gridInfoDefault.classList.remove('active');
+                gridInfoCell.classList.remove('active');
+                gridInfoRow.classList.remove('active');
+                gridInfoColumn.classList.remove('active');
+            }
+
+            mainGridCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    clearGridHighlights();
+                    this.classList.add('highlighted');
+                    gridInfoCell.classList.add('active');
+                });
+            });
+
+            mainGridHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    clearGridHighlights();
+                    this.classList.add('highlighted');
+                    const type = this.dataset.type;
+                    const label = this.dataset.label;
+
+                    if (type === 'column') {
+                        gridInfoColumn.classList.add('active');
+                        // Highlight all cells in this column
+                        document.querySelectorAll(`#main-spreadsheet-grid .grid-cell[data-cell^="${label}"]`).forEach(cell => {
+                            cell.classList.add('highlighted');
+                        });
+                    } else if (type === 'row') {
+                        gridInfoRow.classList.add('active');
+                        // Highlight all cells in this row
+                        document.querySelectorAll(`#main-spreadsheet-grid .grid-cell[data-cell$="${label}"]`).forEach(cell => {
+                            cell.classList.add('highlighted');
+                        });
+                    }
+                });
+            });
+
+            // --- Data Entry Section ---
+            const dataEntryCells = document.querySelectorAll('#data-entry-grid .grid-cell');
+            const typeDataBtn = document.getElementById('type-data-btn');
+            const clearCellBtn = document.getElementById('clear-cell-btn');
+            const dataEntryStatus = document.getElementById('data-entry-status');
+            let selectedDataCell = null;
+
+            function clearDataEntrySelection() {
+                dataEntryCells.forEach(cell => cell.classList.remove('selected'));
+            }
+
+            dataEntryCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    clearDataEntrySelection();
+                    this.classList.add('selected');
+                    selectedDataCell = this;
+                    dataEntryStatus.textContent = `Cell ${this.dataset.cell} selected.`;
+                });
+            });
+
+            typeDataBtn.addEventListener('click', () => {
+                if (selectedDataCell) {
+                    const sampleData = ["Hello", "123", "Data", "Value", "Item"];
+                    const randomData = sampleData[Math.floor(Math.random() * sampleData.length)];
+                    selectedDataCell.textContent = randomData;
+                    dataEntryStatus.textContent = `Typed "${randomData}" into ${selectedDataCell.dataset.cell}.`;
+                } else {
+                    dataEntryStatus.textContent = 'Please select a cell first!';
+                }
+            });
+
+            clearCellBtn.addEventListener('click', () => {
+                if (selectedDataCell) {
+                    selectedDataCell.textContent = '';
+                    dataEntryStatus.textContent = `Cleared cell ${selectedDataCell.dataset.cell}.`;
+                } else {
+                    dataEntryStatus.textContent = 'Please select a cell first!';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

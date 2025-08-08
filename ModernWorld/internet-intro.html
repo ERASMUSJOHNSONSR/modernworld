@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is structured into a linear, scrollable format with distinct sections: "Introduction," "What is the Internet?", "Web Browsers," and "URLs." A sticky header provides quick navigation links to each section. The "What is the Internet?" section uses a conceptual HTML/CSS diagram to illustrate interconnectedness. The "Web Browsers" section lists common browsers using a card-based grid. The "URLs" section features an interactive breakdown where users click on parts of a sample URL to reveal explanations. This design facilitates a progressive understanding of concepts while offering interactive exploration for key details. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Definition of the Internet. -> Goal: Inform/Explain. -> Viz/Method: Conceptual diagram using HTML/CSS/Unicode characters to show interconnected nodes. -> Interaction: None. -> Justification: A visual metaphor helps simplify the abstract concept of a global network. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Web browser definition and examples. -> Goal: Inform/List. -> Viz/Method: A grid of styled cards, each with a browser name and a Unicode icon. -> Interaction: Subtle hover effect on cards. -> Justification: Presents information clearly and visually appealingly for multiple examples. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: URL definition and components. -> Goal: Inform/Break down. -> Viz/Method: An interactive display of a sample URL. Each component (scheme, domain, path) is a clickable HTML element. -> Interaction: Clicking a URL segment updates a dynamic text panel with its definition and purpose. -> Justification: This active learning approach makes understanding URL structure much more concrete and engaging than static text. -> Library/Method: Vanilla JS for click events and content updates.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .url-part {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 0 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-family: 'Inter', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .url-part:hover {
+            background-color: #bfdbfe; /* blue-200 */
+            color: #1e40af; /* blue-800 */
+        }
+        .url-part.active {
+            background-color: #67e8f9; /* cyan-300 */
+            color: #0e7490; /* cyan-700 */
+            font-weight: 600;
+        }
+        .info-panel-item {
+            display: none;
+        }
+        .info-panel-item.active {
+            display: block;
+        }
+        .network-node {
+            width: 60px;
+            height: 60px;
+            background-color: #a7d9f7; /* light blue */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #0e7490; /* cyan-700 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .network-line {
+            height: 2px;
+            background-color: #94a3b8; /* slate-400 */
+            position: absolute;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-teal-700 hover:bg-teal-800 transition-colors">HOME</a>
+                <h1 class="text-xl font-bold text-teal-800 ml-2">Internet Basics</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Overview</a>
+                <a href="#what-is-internet" class="nav-link text-stone-600 hover:text-teal-600 font-medium">The Internet</a>
+                <a href="#web-browsers" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Web Browsers</a>
+                <a href="#urls" class="nav-link text-stone-600 hover:text-teal-600 font-medium">URLs</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-teal-800 mb-4">ModernWorld Introduction to the Internet</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Embark on a journey to understand the fundamental concepts that power our connected world. This guide will introduce you to the Internet, web browsers, and URLs.</p>
+        </section>
+
+        <section id="what-is-internet" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">What is the Internet?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">The Internet is a vast, global network of interconnected computer networks. It allows billions of devices worldwide to communicate and share information using standardized protocols.</p>
+            </div>
+            <div class="flex justify-center items-center relative h-64 max-w-2xl mx-auto">
+                <div class="network-node absolute top-1/4 left-1/4">💻</div>
+                <div class="network-node absolute top-1/4 right-1/4">📱</div>
+                <div class="network-node absolute bottom-1/4 left-1/3">🌐</div>
+                <div class="network-node absolute bottom-1/4 right-1/3">☁️</div>
+
+                <div class="network-line w-1/3 top-1/3 left-1/4 transform rotate-45 origin-top-left"></div>
+                <div class="network-line w-1/3 top-1/3 right-1/4 transform -rotate-45 origin-top-right"></div>
+                <div class="network-line w-1/2 top-1/2 left-1/4 transform rotate-0"></div>
+                <div class="network-line w-1/3 bottom-1/3 left-1/4 transform -rotate-45 origin-bottom-left"></div>
+                <div class="network-line w-1/3 bottom-1/3 right-1/4 transform rotate-45 origin-bottom-right"></div>
+            </div>
+            <p class="text-center text-stone-600 mt-8 max-w-xl mx-auto">It's a "network of networks," enabling communication, information sharing, and access to services across the globe.</p>
+        </section>
+
+        <section id="web-browsers" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Web Browsers: Your Internet Gateway</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A web browser is a software application that allows you to access, view, and interact with information on the World Wide Web. It's your window to the internet.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 bg-white rounded-lg shadow-md flex flex-col items-center text-center card-hover">
+                    <span class="text-5xl mb-3">🌐</span>
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">Google Chrome</h4>
+                    <p class="text-stone-700">Popular for its speed and vast extension library.</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-md flex flex-col items-center text-center card-hover">
+                    <span class="text-5xl mb-3">🦊</span>
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">Mozilla Firefox</h4>
+                    <p class="text-stone-700">Known for its strong privacy features and customization.</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-md flex flex-col items-center text-center card-hover">
+                    <span class="text-5xl mb-3">🧭</span>
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">Microsoft Edge</h4>
+                    <p class="text-stone-700">Microsoft's modern browser, built on Chromium.</p>
+                </div>
+                <div class="p-6 bg-white rounded-lg shadow-md flex flex-col items-center text-center card-hover">
+                    <span class="text-5xl mb-3">🍎</span>
+                    <h4 class="text-xl font-semibold text-teal-800 mb-2">Apple Safari</h4>
+                    <p class="text-stone-700">Default browser for Apple devices, focusing on performance and privacy.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="urls" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">URLs: Addresses on the Web</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A Uniform Resource Locator (URL) is the address of a specific resource on the Internet, like a webpage or an image. It tells your browser where to find what you're looking for.</p>
+            </div>
+            
+            <div class="bg-stone-100 p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+                <h4 class="text-xl font-semibold text-teal-800 mb-4 text-center">Interactive URL Breakdown:</h4>
+                <div class="text-center mb-6 flex flex-wrap justify-center items-center">
+                    <span id="url-scheme" class="url-part">https://</span><span id="url-subdomain" class="url-part">www.</span><span id="url-domain" class="url-part">example</span><span id="url-tld" class="url-part">.com</span><span id="url-path" class="url-part">/products/category/</span><span id="url-file" class="url-part">item.html</span>
+                </div>
+                <div id="url-info-panel" class="bg-white p-4 rounded-lg min-h-[100px]">
+                    <div id="info-default" class="info-panel-item active">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Click a part of the URL above!</h5>
+                        <p class="text-stone-700">Learn about the different components that make up a web address.</p>
+                    </div>
+                    <div id="info-scheme" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Scheme (e.g., `https://`)</h5>
+                        <p class="text-stone-700">Indicates the protocol used to access the resource. `https` (Hypertext Transfer Protocol Secure) is the most common and secure protocol for web pages.</p>
+                    </div>
+                    <div id="info-subdomain" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Subdomain (e.g., `www.`)</h5>
+                        <p class="text-stone-700">An optional part that specifies a subdivision of the domain. `www` (World Wide Web) is common but not always present.</p>
+                    </div>
+                    <div id="info-domain" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Domain Name (e.g., `example`)</h5>
+                        <p class="text-stone-700">The unique name that identifies a website or organization on the internet.</p>
+                    </div>
+                    <div id="info-tld" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Top-Level Domain (TLD) (e.g., `.com`)</h5>
+                        <p class="text-stone-700">The last segment of the domain name, indicating the type or country of the organization (e.g., `.com` for commercial, `.org` for organization, `.gov` for government, `.uk` for United Kingdom).</p>
+                    </div>
+                    <div id="info-path" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">Path (e.g., `/products/category/`)</h5>
+                        <p class="text-stone-700">Specifies the exact location of a page or resource within the website's structure, similar to folders on your computer.</p>
+                    </div>
+                    <div id="info-file" class="info-panel-item">
+                        <h5 class="text-lg font-semibold text-teal-800 mb-1">File Name (e.g., `item.html`)</h5>
+                        <p class="text-stone-700">The specific file being requested on the server. This might be a webpage, an image, a document, or other resource.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParts = {
+                scheme: document.getElementById('url-scheme'),
+                subdomain: document.getElementById('url-subdomain'),
+                domain: document.getElementById('url-domain'),
+                tld: document.getElementById('url-tld'),
+                path: document.getElementById('url-path'),
+                file: document.getElementById('url-file')
+            };
+
+            const infoPanelItems = {
+                default: document.getElementById('info-default'),
+                scheme: document.getElementById('info-scheme'),
+                subdomain: document.getElementById('info-subdomain'),
+                domain: document.getElementById('info-domain'),
+                tld: document.getElementById('info-tld'),
+                path: document.getElementById('info-path'),
+                file: document.getElementById('info-file')
+            };
+
+            function showUrlInfo(partName) {
+                // Deactivate all URL parts and info items
+                Object.values(urlParts).forEach(part => part.classList.remove('active'));
+                Object.values(infoPanelItems).forEach(item => item.classList.remove('active'));
+
+                // Activate the clicked URL part
+                if (urlParts[partName]) {
+                    urlParts[partName].classList.add('active');
+                }
+
+                // Activate the corresponding info item
+                if (infoPanelItems[partName]) {
+                    infoPanelItems[partName].classList.add('active');
+                } else {
+                    infoPanelItems.default.classList.add('active');
+                }
+            }
+
+            // Add click listeners to each URL part
+            for (const key in urlParts) {
+                if (urlParts.hasOwnProperty(key)) {
+                    urlParts[key].addEventListener('click', function() {
+                        showUrlInfo(key);
+                    });
+                }
+            }
+
+            // Initialize with default info
+            showUrlInfo('default');
+        });
+    </script>
+</body>
+</html>
+
+
+       <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

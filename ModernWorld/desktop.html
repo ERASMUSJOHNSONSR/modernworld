@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A tab-based SPA with two main sections: "Hardware" and "Software (GUI)". The "Hardware" section uses an interactive diagram layout where clicking a component displays its info. The "Software (GUI)" section uses a simulated desktop where clicking UI elements explains their function. This structure separates the two core concepts of the report and uses interactive, contextual learning to improve user understanding and engagement over a static text document. -->
+    <!-- Visualization & Content Choices: Hardware Section: Goal(Inform/Organize) -> Viz(Interactive HTML/CSS Diagram) -> Interaction(Click to show info in a panel) -> Justification(Visual and spatial learning is more effective than a list). GUI Section: Goal(Inform/Organize) -> Viz(Simulated Desktop UI) -> Interaction(Click UI elements to get descriptions) -> Justification(Contextual interaction with a mock UI is more intuitive for learning GUI concepts). No quantitative data is present, so no charts are used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
+        }
+        .tab-active {
+            background-color: #D4C3A3;
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+        .tab-inactive {
+            background-color: #F0EAD6;
+            color: #7D6D50;
+        }
+        .component-item, .gui-item {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .component-item:hover, .gui-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .component-active {
+            border-color: #A88B4A !important;
+            box-shadow: 0 0 0 3px rgba(212, 195, 163, 0.5);
+            transform: translateY(-2px);
+        }
+        .gui-active {
+            outline: 3px solid #A88B4A;
+            box-shadow: 0 0 15px rgba(212, 195, 163, 0.8);
+            z-index: 10;
+        }
+        .info-panel {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-8">
+            <nav class="flex justify-between items-center mb-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-amber-600 hover:bg-amber-700 transition-colors">HOME</a>
+            </nav>
+            <h1 class="text-4xl md:text-5xl font-bold text-[#7D6D50] mb-2">🖥️ModernWorld Guide to the Computer</h1>
+            <p class="text-lg text-gray-600">Explore the two worlds of a desktop computer: its physical hardware and its on-screen interface.</p>
+        </header>
+
+        <div class="flex justify-center mb-8 rounded-lg shadow-sm w-full md:w-auto max-w-md mx-auto">
+            <button id="tab-hardware" class="w-1/2 p-3 md:p-4 text-lg rounded-l-lg tab-active">⚙️ Hardware</button>
+            <button id="tab-software" class="w-1/2 p-3 md:p-4 text-lg rounded-r-lg tab-inactive">🖥️ Software (GUI)</button>
+        </div>
+
+        <main>
+            <section id="hardware-section">
+                <div class="bg-white/60 p-6 rounded-2xl shadow-lg border border-gray-200/80 mb-6">
+                    <h2 class="text-2xl font-bold text-[#7D6D50] mb-2">The Physical Computer</h2>
+                    <p class="text-gray-700">A desktop computer is a system of physical parts working together. Below is a simplified diagram representing these components. Click on any component name to learn more about its function. The main "Tower" contains the core internal parts, while "Peripherals" are the external devices you use to interact with the computer.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                            <h3 class="text-xl font-bold text-center mb-4 text-[#7D6D50]">The Tower (Internal Components)</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div id="comp-case" class="component-item col-span-2 text-center p-3 bg-gray-100 rounded-lg border-2 border-transparent">Computer Case</div>
+                                <div id="comp-mobo" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Motherboard</div>
+                                <div id="comp-cpu" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">CPU</div>
+                                <div id="comp-gpu" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">GPU / Video Card</div>
+                                <div id="comp-ram" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">RAM</div>
+                                <div id="comp-storage" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Storage (SSD/HDD)</div>
+                                <div id="comp-psu" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Power Supply (PSU)</div>
+                                <div id="comp-cooling" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Cooling System</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                            <h3 class="text-xl font-bold text-center mb-4 text-[#7D6D50]">Peripherals (External Devices)</h3>
+                            <div class="space-y-3">
+                                <div id="comp-monitor" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Monitor</div>
+                                <div id="comp-keyboard" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Keyboard</div>
+                                <div id="comp-mouse" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Mouse</div>
+                                <div id="comp-speakers" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Speakers/Headphones</div>
+                                <div id="comp-other" class="component-item p-3 bg-gray-100 rounded-lg border-2 border-transparent">Other Devices</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="hardware-info" class="info-panel lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-200 min-h-[300px]">
+                        <h3 id="hardware-info-title" class="text-2xl font-bold text-[#A88B4A] mb-3">Select a component</h3>
+                        <p id="hardware-info-desc" class="text-gray-700 leading-relaxed">Click on a component from the diagram on the left to see its description here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="software-section" class="hidden-section">
+                 <div class="bg-white/60 p-6 rounded-2xl shadow-lg border border-gray-200/80 mb-6">
+                    <h2 class="text-2xl font-bold text-[#7D6D50] mb-2">The Graphical User Interface (GUI)</h2>
+                    <p class="text-gray-700">The GUI is what you see on your monitor. It uses a "desktop metaphor" to help you interact with the computer visually. Click on any of the highlighted elements in the simulated desktop below—like the icons, the taskbar, or the window—to learn about their purpose.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-[#5c94e8] p-4 rounded-xl shadow-2xl border-4 border-gray-700 aspect-[16/10] flex flex-col">
+                            <div id="gui-desktop-area" class="relative flex-grow p-4 grid grid-cols-4 gap-4">
+                                <!-- Desktop Icons -->
+                                <div id="gui-icons" class="gui-item flex flex-col items-center text-white text-xs text-center space-y-1 h-fit">
+                                    <div class="w-12 h-12 bg-gray-200/30 rounded-lg flex items-center justify-center text-2xl">📁</div>
+                                    <span>Files</span>
+                                </div>
+                                <div id="gui-shortcuts" class="gui-item flex flex-col items-center text-white text-xs text-center space-y-1 h-fit">
+                                     <div class="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center text-2xl">🌐</div>
+                                     <span>Browser</span>
+                                </div>
+                                <div id="gui-recycle" class="gui-item flex flex-col items-center text-white text-xs text-center space-y-1 h-fit">
+                                    <div class="w-12 h-12 bg-gray-200/30 rounded-lg flex items-center justify-center text-2xl">🗑️</div>
+                                    <span>Recycle Bin</span>
+                                </div>
+                                
+                                <!-- A Fake Window -->
+                                <div id="gui-window" class="gui-item absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 w-3/4 h-3/4 rounded-lg shadow-2xl flex flex-col backdrop-blur-sm">
+                                    <div class="bg-gray-200 p-2 rounded-t-lg flex items-center space-x-2">
+                                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    </div>
+                                    <div class="p-4 text-gray-800">
+                                        <h4 id="gui-folders" class="gui-item font-bold mb-2 inline-block">My Documents</h4>
+                                        <p id="gui-files" class="gui-item">📄 report.docx</p>
+                                    </div>
+                                </div>
+
+                                <!-- Wallpaper and Context Menu -->
+                                <div id="gui-wallpaper" class="gui-item absolute inset-0 -z-10"></div>
+                                <div id="gui-context" class="gui-item absolute bottom-20 right-10 bg-white/90 p-2 rounded shadow-xl text-sm backdrop-blur-sm">
+                                    <p>View</p>
+                                    <p>Sort by</p>
+                                    <hr class="my-1">
+                                    <p>New Folder</p>
+                                </div>
+                            </div>
+                            <!-- Taskbar -->
+                            <div id="gui-taskbar" class="gui-item bg-gray-900/40 backdrop-blur-md text-white mt-auto p-2 rounded-b-lg flex items-center justify-between">
+                                <div id="gui-start" class="gui-item flex items-center space-x-2">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center text-xl">❖</div>
+                                    <div class="w-8 h-8 bg-gray-700/50 rounded-md"></div>
+                                    <div class="w-8 h-8 bg-gray-700/50 rounded-md border-b-2 border-blue-400"></div>
+                                </div>
+                                <div id="gui-tray" class="gui-item flex items-center space-x-3 text-xs pr-2">
+                                    <span>📶</span>
+                                    <span>🔊</span>
+                                    <span>🔋</span>
+                                    <span>7:41 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="software-info" class="info-panel lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border border-gray-200 min-h-[300px]">
+                        <h3 id="software-info-title" class="text-2xl font-bold text-[#A88B4A] mb-3">Select an element</h3>
+                        <p id="software-info-desc" class="text-gray-700 leading-relaxed">Click on an element from the simulated desktop on the left to see its description here.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const hardwareData = {
+            'comp-case': { title: 'Computer Case (Tower/Chassis)', description: "This is the main enclosure that houses most of the internal components. It protects them from dust and damage, and helps with cooling by directing airflow." },
+            'comp-mobo': { title: 'Motherboard', description: "The main circuit board that connects all the computer's components, allowing them to communicate with each other. It's the 'backbone' of the system." },
+            'comp-cpu': { title: 'Central Processing Unit (CPU)', description: "Often called the 'brain' of the computer, the CPU executes instructions and performs calculations. Its speed (measured in GHz) is a major factor in the computer's overall performance." },
+            'comp-gpu': { title: 'Graphics Processing Unit (GPU)', description: "Handles all graphical operations, from drawing the desktop to rendering complex 3D scenes in games. A powerful GPU is crucial for gaming, video editing, and design work." },
+            'comp-ram': { title: 'Random Access Memory (RAM)', description: "This is temporary, high-speed storage that the CPU uses to hold data for programs that are currently running. More RAM allows you to run more applications smoothly at the same time. This data is cleared when the computer is turned off." },
+            'comp-storage': { title: 'Storage Device (HDD / SSD)', description: "Stores your operating system, programs, and all your files permanently, even when the power is off. Solid State Drives (SSDs) are much faster than traditional Hard Disk Drives (HDDs)." },
+            'comp-psu': { title: 'Power Supply Unit (PSU)', description: "Converts AC power from the wall outlet into the specific DC voltages needed by all the computer's internal components." },
+            'comp-cooling': { title: 'Cooling System', description: "Components like the CPU and GPU generate a lot of heat. Cooling systems, which can include fans, heatsinks, or liquid cooling, are essential to dissipate this heat and prevent overheating." },
+            'comp-monitor': { title: 'Monitor', description: "The display screen where you see the computer's visual output, including the desktop, applications, and videos." },
+            'comp-keyboard': { title: 'Keyboard', description: "An input device used for typing text, entering commands, and using keyboard shortcuts to control applications." },
+            'comp-mouse': { title: 'Mouse', description: "A pointing device used to move a cursor on the screen, allowing you to select, click, and interact with graphical elements." },
+            'comp-speakers': { title: 'Speakers/Headphones', description: "Output devices that produce sound, allowing you to hear music, system notifications, and audio from videos." },
+            'comp-other': { title: 'Other Peripherals', description: "Many other devices can be connected, such as printers (for printing documents), scanners (for digitizing physical items), webcams, and microphones (for video calls)." },
+        };
+
+        const softwareData = {
+            'gui-wallpaper': { title: 'Wallpaper / Background', description: 'The customizable image or color that fills the background of your screen. It allows for personalization of the workspace.' },
+            'gui-icons': { title: 'Icons', description: 'Small graphical images that represent applications, files, or folders. Double-clicking an icon typically opens the item it represents.' },
+            'gui-taskbar': { title: 'Taskbar / Dock', description: 'A bar, usually at the bottom of the screen, that contains the Start button, icons for running applications, and the notification area. It provides easy access to programs and system functions.' },
+            'gui-start': { title: 'Start Button / App Launcher', description: 'Provides access to all installed programs, system settings, power options, and search functions. It is the main gateway to your computer\'s capabilities.' },
+            'gui-tray': { title: 'System Tray / Notification Area', description: 'Displays icons for background processes and system status, such as network connection, volume, and battery life. It also shows notifications from applications.' },
+            'gui-window': { title: 'Windows', description: 'Rectangular areas on the screen that display the content of an application, document, or folder. They can be moved, resized, minimized, and closed.' },
+            'gui-folders': { title: 'Folders', description: 'Digital containers used to organize files and other folders. They help keep your data structured and easy to find.' },
+            'gui-files': { title: 'Files', description: 'Icons representing individual items of data, such as a text document, a picture, a song, or a video.' },
+            'gui-recycle': { title: 'Recycle Bin / Trash', description: 'A special folder where deleted files are temporarily stored. This gives you a chance to recover files you deleted by accident before they are permanently removed.' },
+            'gui-shortcuts': { title: 'Shortcuts', description: 'Pointers to an application, file, or folder located elsewhere. They provide a quick way to access items without having to navigate to their actual location.' },
+            'gui-context': { title: 'Context Menus', description: 'Menus that appear when you right-click on an item or the desktop. They provide a list of actions relevant to the specific item you clicked on.' },
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabHardware = document.getElementById('tab-hardware');
+            const tabSoftware = document.getElementById('tab-software');
+            const hardwareSection = document.getElementById('hardware-section');
+            const softwareSection = document.getElementById('software-section');
+
+            const hardwareInfoTitle = document.getElementById('hardware-info-title');
+            const hardwareInfoDesc = document.getElementById('hardware-info-desc');
+            const softwareInfoTitle = document.getElementById('software-info-title');
+            const softwareInfoDesc = document.getElementById('software-info-desc');
+
+            let activeHardwareComponent = null;
+            let activeSoftwareComponent = null;
+
+            function switchTab(activeTab) {
+                if (activeTab === 'hardware') {
+                    tabHardware.classList.remove('tab-inactive');
+                    tabHardware.classList.add('tab-active');
+                    tabSoftware.classList.remove('tab-active');
+                    tabSoftware.classList.add('tab-inactive');
+                    hardwareSection.classList.remove('hidden-section');
+                    softwareSection.classList.add('hidden-section');
+                } else {
+                    tabSoftware.classList.remove('tab-inactive');
+                    tabSoftware.classList.add('tab-active');
+                    tabHardware.classList.remove('tab-active');
+                    tabHardware.classList.add('tab-inactive');
+                    softwareSection.classList.remove('hidden-section');
+                    hardwareSection.classList.add('hidden-section');
+                }
+            }
+
+            tabHardware.addEventListener('click', () => switchTab('hardware'));
+            tabSoftware.addEventListener('click', () => switchTab('software'));
+
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.id;
+                    const data = hardwareData[id];
+
+                    if (activeHardwareComponent) {
+                        activeHardwareComponent.classList.remove('component-active');
+                    }
+                    item.classList.add('component-active');
+                    activeHardwareComponent = item;
+
+                    hardwareInfoTitle.style.opacity = 0;
+                    hardwareInfoDesc.style.opacity = 0;
+
+                    setTimeout(() => {
+                        hardwareInfoTitle.textContent = data.title;
+                        hardwareInfoDesc.textContent = data.description;
+                        hardwareInfoTitle.style.opacity = 1;
+                        hardwareInfoDesc.style.opacity = 1;
+                    }, 200);
+                });
+            });
+
+            document.querySelectorAll('.gui-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = item.id;
+                    const data = softwareData[id];
+
+                    if(data) {
+                        if (activeSoftwareComponent) {
+                            activeSoftwareComponent.classList.remove('gui-active');
+                        }
+                        item.classList.add('gui-active');
+                        activeSoftwareComponent = item;
+
+                        softwareInfoTitle.style.opacity = 0;
+                        softwareInfoDesc.style.opacity = 0;
+
+                        setTimeout(() => {
+                            softwareInfoTitle.textContent = data.title;
+                            softwareInfoDesc.textContent = data.description;
+                            softwareInfoTitle.style.opacity = 1;
+                            softwareInfoDesc.style.opacity = 1;
+                        }, 200);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+     <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskbar = document.getElementById('taskbar');
+            const windows = document.querySelectorAll('.desktop-window');
+            const closeButtons = document.querySelectorAll('.close-btn');
+            const wallpaperButtons = document.querySelectorAll('.wallpaper-btn');
+            const desktopBody = document.getElementById('desktop-body');
+            const taskbarButtons = document.querySelectorAll('.taskbar-btn');
+            const welcomeText = document.querySelector('#desktop .text-center');
+
+            let openWindow = null;
+
+            function hideAllWindows() {
+                windows.forEach(win => {
+                    win.classList.add('hidden');
+                });
+                taskbarButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                openWindow = null;
+            }
+
+            taskbar.addEventListener('click', (e) => {
+                const button = e.target.closest('.taskbar-btn');
+                if (!button) return;
+
+                const targetId = button.dataset.target;
+                const targetWindow = document.getElementById(targetId);
+
+                if (openWindow === targetWindow) {
+                    hideAllWindows();
+                    if(welcomeText) welcomeText.classList.remove('hidden');
+                } else {
+                    hideAllWindows();
+                    if (targetWindow) {
+                        targetWindow.classList.remove('hidden');
+                        button.classList.add('active');
+                        openWindow = targetWindow;
+                        if(welcomeText) welcomeText.classList.add('hidden');
+                    }
+                }
+            });
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    hideAllWindows();
+                    if(welcomeText) welcomeText.classList.remove('hidden');
+                });
+            });
+            
+            wallpaperButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const color = btn.dataset.color;
+                    if (color) {
+                        desktopBody.style.backgroundColor = color;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

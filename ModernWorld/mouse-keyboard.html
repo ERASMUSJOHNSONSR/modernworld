@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MordernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A tab-based single-page application is used to clearly separate the two main topics: Mouse and Keyboard. This structure provides immediate clarity and easy top-level navigation. Within each tab, content is further divided into 'Actions' and 'Ergonomics'. The 'Actions' sections use interactive diagrams where users click on specific parts (e.g., a mouse button) to get contextual information, making learning active rather than passive. The 'Ergonomics' sections use similar interactive visuals to highlight correct posture. This task-oriented, layered approach was chosen to break down the information into manageable, interactive chunks, enhancing user engagement and comprehension over a static text document. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Mouse/Keyboard parts and actions. -> Goal: Inform/Teach. -> Viz/Method: Interactive diagrams built with HTML/CSS. -> Interaction: User clicks on labeled buttons corresponding to parts of the diagram. A separate text area updates with detailed information from the source document. -> Justification: This is more engaging than a static list and reinforces the connection between the physical object and its function. -> Library: Vanilla JS for interaction.
+        - Report Info: Ergonomic guidelines. -> Goal: Instruct/Demonstrate. -> Viz/Method: Interactive HTML/CSS diagrams of correct posture. -> Interaction: Buttons for 'Wrist Position', 'Posture', etc., highlight the relevant area on the diagram and display best-practice descriptions. -> Justification: Visual demonstration with interactive highlights is more effective for teaching physical posture than text alone. -> Library: Vanilla JS.
+        - Report Info: Keyboard shortcuts. -> Goal: Inform/Reference. -> Viz/Method: A clean, styled HTML table. -> Interaction: None. -> Justification: A table is the clearest and most standard way to present a list of shortcuts for easy reference. -> Library: N/A.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            border-color: #0d9488; /* teal-600 */
+            color: #0d9488;
+            font-weight: 600;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .interactive-area {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .interactive-area:hover {
+            border-color: #ccb2a3;
+        }
+        .highlight {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 10px 10px rgba(13, 148, 136, 0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <a href="index.html" class="inline-block mb-4 px-4 py-2 rounded text-base font-semibold text-white bg-teal-600 hover:bg-teal-700 transition-colors">HOME</a>
+            <h1 class="text-3xl sm:text-4xl font-bold text-teal-800">A MordernWorld Guide to Using a Mouse & Keyboard</h1>
+            <p class="mt-2 text-lg text-stone-600">Click the tabs and interactive elements below to learn.</p>
+        </header>
+
+        <div class="mb-8 border-b border-stone-300">
+            <nav class="flex justify-center -mb-px space-x-4 sm:space-x-8" aria-label="Tabs">
+                <button id="mouse-tab" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-stone-500 hover:text-teal-700 hover:border-teal-300">
+                    🖱️ The Mouse
+                </button>
+                <button id="keyboard-tab" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-stone-500 hover:text-teal-700 hover:border-teal-300">
+                    ⌨️ The Keyboard
+                </button>
+            </nav>
+        </div>
+
+        <main>
+            <div id="mouse-content" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">The Computer Mouse</h2>
+                    <p class="text-stone-600 mb-6">The mouse is a pointing device that allows you to interact with graphical elements on your screen. Below is an interactive diagram. Click on any action to learn more about what it does.</p>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="relative w-full max-w-xs mx-auto">
+                            <div class="relative bg-stone-200 h-64 w-48 rounded-t-full rounded-b-lg mx-auto shadow-inner">
+                                <div id="mouse-body" class="absolute inset-0"></div>
+                                <div id="left-click-area" class="absolute top-0 left-0 w-1/2 h-2/5 bg-stone-300 rounded-tl-full hover:bg-stone-400 cursor-pointer transition-colors"></div>
+                                <div id="right-click-area" class="absolute top-0 right-0 w-1/2 h-2/5 bg-stone-300 rounded-tr-full hover:bg-stone-400 cursor-pointer transition-colors"></div>
+                                <div id="scroll-wheel-area" class="absolute top-1/4 left-1/2 -translate-x-1/2 w-4 h-10 bg-stone-500 rounded-md cursor-pointer hover:bg-stone-600 transition-colors"></div>
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 h-1/3 w-1 bg-stone-400"></div>
+                            </div>
+                            <div class="flex flex-col space-y-2 mt-4">
+                                <button data-target="mouse-action-point" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Point / Hover</button>
+                                <button data-target="mouse-action-left-click" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Click (Left-Click)</button>
+                                <button data-target="mouse-action-double-click" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Double-Click</button>
+                                <button data-target="mouse-action-right-click" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Right-Click</button>
+                                <button data-target="mouse-action-drag" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Click and Drag</button>
+                                <button data-target="mouse-action-scroll" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Scroll</button>
+                                <button data-target="mouse-action-middle-click" class="interactive-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Middle-Click</button>
+                            </div>
+                        </div>
+                        <div id="mouse-action-info" class="bg-stone-100 p-6 rounded-lg min-h-[300px]">
+                            <h3 id="mouse-info-title" class="text-xl font-semibold text-teal-800 mb-2">Select an Action</h3>
+                            <p id="mouse-info-desc" class="text-stone-700">Click a button on the left to see a description of the mouse action and its common uses.</p>
+                        </div>
+                    </div>
+                    <div class="mt-12">
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">Mouse Ergonomics</h3>
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                             <div id="mouse-ergo-info" class="bg-stone-100 p-6 rounded-lg min-h-[200px] order-2 md:order-1">
+                                <h3 id="mouse-ergo-title" class="text-xl font-semibold text-teal-800 mb-2">Ergonomic Best Practices</h3>
+                                <p id="mouse-ergo-desc" class="text-stone-700">Learn how to use your mouse comfortably and safely. Click a topic to see the details.</p>
+                            </div>
+                            <div class="order-1 md:order-2">
+                                <div class="flex flex-col space-y-2">
+                                    <button data-target="mouse-ergo-position" class="interactive-ergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Position</button>
+                                    <button data-target="mouse-ergo-wrist" class="interactive-ergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Wrist Position</button>
+                                    <button data-target="mouse-ergo-movement" class="interactive-ergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Movement</button>
+                                     <button data-target="mouse-ergo-grip" class="interactive-ergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Grip & Breaks</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="keyboard-content" class="content-section">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold text-teal-700 mb-4">The Computer Keyboard</h2>
+                    <p class="text-stone-600 mb-6">The keyboard is used for typing and issuing commands. Explore the interactive sections below to understand its parts and how to use it properly.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 items-start">
+                        <div>
+                            <div class="w-full bg-stone-200 p-2 rounded-lg shadow-inner">
+                                <div class="grid grid-cols-10 gap-1 text-xs text-center font-mono">
+                                    <!-- Function Keys -->
+                                    <div class="bg-stone-300 rounded p-1 col-span-10">Function Keys (F1-F12)</div>
+                                    <!-- Number Row -->
+                                    <div class="bg-stone-300 rounded p-1 col-span-8">Alphanumeric Keys</div>
+                                    <div id="key-backspace" class="bg-stone-400 rounded p-1 col-span-2">Backspace</div>
+                                    <!-- QWERTY Row -->
+                                    <div id="key-tab" class="bg-stone-400 rounded p-1">Tab</div>
+                                    <div class="bg-stone-300 rounded p-1 col-span-9">Q W E R T Y U I O P</div>
+                                    <!-- Home Row -->
+                                    <div id="key-caps" class="bg-stone-400 rounded p-1">Caps</div>
+                                    <div id="key-home-row" class="bg-teal-300 rounded p-1 col-span-7">A S D F G H J K L</div>
+                                    <div class="bg-stone-300 rounded p-1">; '</div>
+                                    <div id="key-enter" class="bg-stone-400 rounded p-1">Enter</div>
+                                    <!-- Bottom Row -->
+                                    <div id="key-shift-left" class="bg-stone-400 rounded p-1 col-span-2">Shift</div>
+                                    <div class="bg-stone-300 rounded p-1 col-span-7">Z X C V B N M , . /</div>
+                                    <div id="key-shift-right" class="bg-stone-400 rounded p-1">Shift</div>
+                                    <!-- Space Row -->
+                                    <div id="key-ctrl-left" class="bg-stone-400 rounded p-1">Ctrl</div>
+                                    <div id="key-win-left" class="bg-stone-400 rounded p-1">Win</div>
+                                    <div id="key-alt-left" class="bg-stone-400 rounded p-1">Alt</div>
+                                    <div id="key-space" class="bg-stone-300 rounded p-1 col-span-4">Spacebar</div>
+                                    <div id="key-alt-right" class="bg-stone-400 rounded p-1">Alt</div>
+                                    <div id="key-win-right" class="bg-stone-400 rounded p-1">Win</div>
+                                    <div id="key-ctrl-right" class="bg-stone-400 rounded p-1">Ctrl</div>
+                                </div>
+                            </div>
+                             <div class="flex flex-col space-y-2 mt-4">
+                                <button data-target="key-action-typing" class="interactive-key-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Typing Letters & Numbers</button>
+                                <button data-target="key-action-modifiers" class="interactive-key-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Modifier Keys (Shift, Ctrl, Alt)</button>
+                                <button data-target="key-action-special" class="interactive-key-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Special Keys (Enter, Space, etc.)</button>
+                            </div>
+                        </div>
+                        <div id="keyboard-action-info" class="bg-stone-100 p-6 rounded-lg min-h-[300px]">
+                            <h3 id="key-info-title" class="text-xl font-semibold text-teal-800 mb-2">Select an Action</h3>
+                            <p id="key-info-desc" class="text-stone-700">Click a button to learn about different keyboard actions and see the relevant keys highlighted.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-12">
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">Keyboard Ergonomics & Shortcuts</h3>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-xl font-semibold text-teal-800 mb-3">Ergonomics</h4>
+                                <div id="keyboard-ergo-info" class="bg-stone-100 p-6 rounded-lg mb-4 min-h-[150px]">
+                                    <h3 id="keyboard-ergo-title" class="text-xl font-semibold text-teal-800 mb-2">Proper Posture</h3>
+                                    <p id="keyboard-ergo-desc" class="text-stone-700">Click a topic to learn about correct keyboarding posture.</p>
+                                </div>
+                                <div class="flex flex-col space-y-2">
+                                    <button data-target="key-ergo-placement" class="interactive-kergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Keyboard Placement</button>
+                                    <button data-target="key-ergo-wrist" class="interactive-kergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Wrist & Hand Position</button>
+                                    <button data-target="key-ergo-posture" class="interactive-kergo-btn bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">Overall Posture</button>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-teal-800 mb-3">Common Keyboard Shortcuts</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left bg-white rounded-lg shadow">
+                                        <thead>
+                                            <tr class="bg-stone-200">
+                                                <th class="p-3 font-semibold">Action</th>
+                                                <th class="p-3 font-semibold">Shortcut (Win/Mac)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-stone-200">
+                                            <tr><td class="p-3">Copy</td><td class="p-3 font-mono">Ctrl + C / Cmd + C</td></tr>
+                                            <tr><td class="p-3">Cut</td><td class="p-3 font-mono">Ctrl + X / Cmd + X</td></tr>
+                                            <tr><td class="p-3">Paste</td><td class="p-3 font-mono">Ctrl + V / Cmd + V</td></tr>
+                                            <tr><td class="p-3">Undo</td><td class="p-3 font-mono">Ctrl + Z / Cmd + Z</td></tr>
+                                            <tr><td class="p-3">Save</td><td class="p-3 font-mono">Ctrl + S / Cmd + S</td></tr>
+                                            <tr><td class="p-3">Select All</td><td class="p-3 font-mono">Ctrl + A / Cmd + A</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = {
+                mouse: document.getElementById('mouse-tab'),
+                keyboard: document.getElementById('keyboard-tab'),
+            };
+
+            const contents = {
+                mouse: document.getElementById('mouse-content'),
+                keyboard: document.getElementById('keyboard-content'),
+            };
+
+            const mouseInfo = {
+                title: document.getElementById('mouse-info-title'),
+                desc: document.getElementById('mouse-info-desc'),
+            };
+
+            const mouseErgoInfo = {
+                title: document.getElementById('mouse-ergo-title'),
+                desc: document.getElementById('mouse-ergo-desc'),
+            };
+            
+            const keyInfo = {
+                title: document.getElementById('key-info-title'),
+                desc: document.getElementById('key-info-desc'),
+            };
+            
+            const keyboardErgoInfo = {
+                title: document.getElementById('keyboard-ergo-title'),
+                desc: document.getElementById('keyboard-ergo-desc'),
+            };
+
+            const mouseActionData = {
+                'mouse-action-point': {
+                    title: 'Point / Hover',
+                    desc: 'Moving the mouse to position the pointer over an item on the screen. Often, hovering over an item will reveal more information or change the pointer\'s appearance (e.g., to a hand for a link).',
+                    highlight: ['mouse-body']
+                },
+                'mouse-action-left-click': {
+                    title: 'Click (Left-Click)',
+                    desc: 'A single, quick press and release of the left mouse button. Used for selecting an item, opening a hyperlink, or activating a program icon.',
+                    highlight: ['left-click-area']
+                },
+                'mouse-action-double-click': {
+                    title: 'Double-Click',
+                    desc: 'Two quick presses of the left mouse button in rapid succession. Used for opening files, folders, or launching applications.',
+                    highlight: ['left-click-area']
+                },
+                'mouse-action-right-click': {
+                    title: 'Right-Click',
+                    desc: 'A single, quick press and release of the right mouse button. Opens a "context menu" with options relevant to the item you clicked on.',
+                    highlight: ['right-click-area']
+                },
+                'mouse-action-drag': {
+                    title: 'Click and Drag',
+                    desc: 'Pressing and holding down the left mouse button while moving the mouse, then releasing. Used for moving objects, selecting text, or resizing windows.',
+                    highlight: ['mouse-body', 'left-click-area']
+                },
+                'mouse-action-scroll': {
+                    title: 'Scrolling',
+                    desc: 'Rolling the scroll wheel forward or backward. Used for moving up and down through web pages or documents.',
+                    highlight: ['scroll-wheel-area']
+                },
+                'mouse-action-middle-click': {
+                    title: 'Middle-Click',
+                    desc: 'Pressing down on the scroll wheel like a button. Often opens links in a new browser tab or enables "autoscroll" mode.',
+                    highlight: ['scroll-wheel-area']
+                }
+            };
+
+            const mouseErgoData = {
+                'mouse-ergo-position': {
+                    title: 'Position',
+                    desc: 'Place the mouse close to your keyboard, at the same height as your elbow. Your upper arm should be relaxed and close to your side.'
+                },
+                'mouse-ergo-wrist': {
+                    title: 'Wrist Position',
+                    desc: 'Keep your wrist straight and in a neutral position. Avoid bending it up, down, or to the sides. Do not rest your wrist on the desk while actively moving the mouse.'
+                },
+                'mouse-ergo-movement': {
+                    title: 'Movement',
+                    desc: 'Use your whole arm for larger movements, not just your wrist, to prevent strain.'
+                },
+                'mouse-ergo-grip': {
+                    title: 'Grip & Breaks',
+                    desc: 'Maintain a relaxed grip and avoid squeezing the mouse. Take frequent short breaks to rest your hand and wrist.'
+                }
+            };
+
+            const keyActionData = {
+                'key-action-typing': {
+                    title: 'Typing Letters & Numbers',
+                    desc: 'Press individual keys to input characters. Hold `Shift` for uppercase letters or the upper symbol on a key. Use the number row or numeric keypad for numbers.',
+                    highlight: ['key-home-row']
+                },
+                'key-action-modifiers': {
+                    title: 'Modifier Keys',
+                    desc: 'Keys like Shift, Ctrl (Control), and Alt are used in combination with other keys to perform shortcuts and special actions (e.g., Ctrl+C to Copy).',
+                    highlight: ['key-shift-left', 'key-shift-right', 'key-ctrl-left', 'key-ctrl-right', 'key-alt-left', 'key-alt-right']
+                },
+                'key-action-special': {
+                    title: 'Special Keys',
+                    desc: 'The Enter key starts a new line or confirms an action. The Spacebar adds a space. Backspace deletes to the left of the cursor, and Tab indents or moves between fields.',
+                    highlight: ['key-enter', 'key-space', 'key-backspace', 'key-tab']
+                }
+            };
+            
+            const keyErgoData = {
+                'key-ergo-placement': {
+                    title: 'Keyboard Placement',
+                    desc: 'Place the keyboard directly in front of you, centered with your body. It should be at or slightly below elbow height.'
+                },
+                'key-ergo-wrist': {
+                    title: 'Wrist & Hand Position',
+                    desc: 'Keep your wrists straight and elevated, not resting on the desk while typing. Your hands should "float" over the keys. Rest your fingers on the Home Row (ASDF JKL;).'
+                },
+                'key-ergo-posture': {
+                    title: 'Overall Posture',
+                    desc: 'Maintain a relaxed posture with shoulders down and elbows bent at roughly a 90-degree angle, close to your body. Take regular breaks.'
+                }
+            };
+
+            function switchTab(tabName) {
+                Object.values(tabs).forEach(tab => tab.classList.remove('active'));
+                Object.values(contents).forEach(content => content.classList.remove('active'));
+
+                tabs[tabName].classList.add('active');
+                contents[tabName].classList.add('active');
+            }
+            
+            function clearHighlights(parentSelector) {
+                document.querySelectorAll(`${parentSelector} .highlight`).forEach(el => el.classList.remove('highlight'));
+            }
+
+            tabs.mouse.addEventListener('click', () => switchTab('mouse'));
+            tabs.keyboard.addEventListener('click', () => switchTab('keyboard'));
+
+            document.querySelectorAll('.interactive-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const data = mouseActionData[targetId];
+                    if (data) {
+                        mouseInfo.title.textContent = data.title;
+                        mouseInfo.desc.textContent = data.desc;
+                        clearHighlights('#mouse-content');
+                        data.highlight.forEach(id => document.getElementById(id)?.classList.add('highlight'));
+                    }
+                });
+            });
+
+            document.querySelectorAll('.interactive-ergo-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const data = mouseErgoData[targetId];
+                    if (data) {
+                        mouseErgoInfo.title.textContent = data.title;
+                        mouseErgoInfo.desc.textContent = data.desc;
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.interactive-key-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const data = keyActionData[targetId];
+                    if (data) {
+                        keyInfo.title.textContent = data.title;
+                        keyInfo.desc.textContent = data.desc;
+                        clearHighlights('#keyboard-content');
+                        data.highlight.forEach(id => document.getElementById(id)?.classList.add('highlight'));
+                    }
+                });
+            });
+
+            document.querySelectorAll('.interactive-kergo-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const data = keyErgoData[targetId];
+                    if (data) {
+                        keyboardErgoInfo.title.textContent = data.title;
+                        keyboardErgoInfo.desc.textContent = data.desc;
+                    }
+                });
+            });
+
+            switchTab('mouse');
+        });
+    </script>
+</body>
+</html>
+
+ <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskbarButtons = document.querySelectorAll('#taskbar .taskbar-btn');
+            const windows = document.querySelectorAll('#window-container .desktop-window');
+            const closeButtons = document.querySelectorAll('.close-btn');
+            const wallpaperButtons = document.querySelectorAll('.wallpaper-btn');
+            const desktopBody = document.getElementById('desktop-body');
+            const timeEl = document.getElementById('time');
+            const dateEl = document.getElementById('date');
+
+            const llmResponseEl = document.getElementById('llm-response');
+            const explainComponentBtn = document.getElementById('explain-component-btn');
+            const componentSelect = document.getElementById('component-select');
+            const getTipBtn = document.getElementById('get-tip-btn');
+
+            let openWindow = null;
+            let chatHistory = [];
+
+            function showLoading(element) {
+                element.innerHTML = '<span class="loading-spinner"></span> Loading...';
+            }
+
+            function hideAllWindows() {
+                windows.forEach(win => win.classList.add('hidden'));
+                taskbarButtons.forEach(btn => btn.classList.remove('active'));
+                openWindow = null;
+            }
+
+            async function callGeminiAPI(prompt) {
+                showLoading(llmResponseEl);
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        llmResponseEl.innerHTML = text;
+                        chatHistory.push({ role: "model", parts: [{ text: text }] });
+                    } else {
+                        llmResponseEl.innerHTML = 'Error: Could not get a response from Gemini.';
+                    }
+                } catch (error) {
+                    llmResponseEl.innerHTML = `Error: ${error.message}`;
+                }
+            }
+
+            taskbarButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = button.dataset.target;
+                    const targetWindow = document.getElementById(targetId);
+
+                    if (openWindow === targetWindow) {
+                        hideAllWindows();
+                    } else {
+                        hideAllWindows();
+                        if (targetWindow) {
+                            targetWindow.classList.remove('hidden');
+                            button.classList.add('active');
+                            openWindow = targetWindow;
+                            // Reset LLM response when assistant window opens
+                            if (targetId === 'window-assistant') {
+                                llmResponseEl.innerHTML = '<p class="text-gray-500">Responses from Gemini will appear here.</p>';
+                                chatHistory = []; // Clear chat history for new session
+                            }
+                        }
+                    }
+                });
+            });
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', hideAllWindows);
+            });
+            
+            wallpaperButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    desktopBody.style.backgroundColor = btn.dataset.color;
+                });
+            });
+
+            explainComponentBtn.addEventListener('click', () => {
+                const component = componentSelect.value;
+                if (component) {
+                    callGeminiAPI(`Explain what "${component}" is in the context of a computer desktop, in a concise and easy-to-understand way.`);
+                } else {
+                    llmResponseEl.innerHTML = 'Please select a component to explain.';
+                }
+            });
+
+            getTipBtn.addEventListener('click', () => {
+                callGeminiAPI('Give me a short, helpful tip about using a computer desktop, like a "Desktop Tip of the Day".');
+            });
+
+            function updateClock() {
+                const now = new Date();
+                timeEl.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                dateEl.textContent = now.toLocaleDateString();
+            }
+
+            setInterval(updateClock, 1000);
+            updateClock();
+        });
+    </script>
+</body>
+</html>

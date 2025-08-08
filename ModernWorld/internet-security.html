@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Teal Accent -->
+    <!-- Application Structure Plan: The SPA is structured into distinct, scrollable sections: "Introduction," "Viruses & Malware," "Phishing," "Antivirus Software," and "Key Takeaways." A sticky navigation bar allows quick jumps between these topics. The "Viruses & Malware" section uses expandable cards for definitions. The "Phishing" section features a simulated suspicious email where users click on "red flags" to reveal explanations. The "Antivirus Software" section includes a visual simulation of a scan. This design prioritizes active learning and visual reinforcement to make complex security concepts accessible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Introduction to Internet Security. -> Goal: Inform. -> Viz/Method: Concise textual explanation with a shield icon (Unicode). -> Interaction: None. -> Justification: Simple and direct for an overview. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Definitions of Viruses and Malware. -> Goal: Inform/Explain. -> Viz/Method: Two distinct cards for "Virus" and "Malware," each with a clickable header to expand/collapse a detailed definition. -> Interaction: Clickable headers toggle content visibility. -> Justification: Allows users to control information density and focus on specific definitions. -> Library/Method: HTML/CSS with Tailwind, Vanilla JS for toggles.
+        - Report Info: Phishing definition and identification. -> Goal: Educate/Instruct. -> Viz/Method: A simulated email interface (HTML/CSS) with specific text elements marked as "red flags." -> Interaction: Clicking a "red flag" element highlights it and updates an adjacent info panel with an explanation of that phishing tactic. -> Justification: Provides a direct, interactive way to learn how to spot phishing attempts in a realistic context. -> Library/Method: Vanilla JS.
+        - Report Info: Antivirus software purpose and function. -> Goal: Inform/Demonstrate. -> Viz/Method: A simple visual representation of a "computer" and a "file." A "Simulate Scan" button triggers a visual animation of a "clean" process. -> Interaction: Button click initiates a short animation showing the file being "scanned" and its status changing. -> Justification: Visualizes an abstract security process (scanning and cleaning) for better comprehension. -> Library/Method: Vanilla JS for animation and state changes.
+        - Report Info: General internet security best practices. -> Goal: Advise. -> Viz/Method: A clear, bulleted list of actionable tips. -> Interaction: None. -> Justification: A concise list is effective for conveying practical advice. -> Library/Method: HTML/CSS with Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .toggle-header {
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #f0f9ff; /* blue-50 */
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #1e40af; /* blue-800 */
+            transition: background-color 0.2s ease;
+        }
+        .toggle-header:hover {
+            background-color: #e0f2fe; /* blue-100 */
+        }
+        .toggle-content {
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e0f2fe;
+            border-top: none;
+            display: none;
+        }
+        .toggle-content.active {
+            display: block;
+        }
+        .phishing-email-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .email-header-line {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        .email-label {
+            font-weight: 600;
+            color: #475569; /* slate-600 */
+            width: 60px;
+            flex-shrink: 0;
+        }
+        .email-value {
+            flex-grow: 1;
+            color: #334155; /* slate-700 */
+        }
+        .email-body-content {
+            margin-top: 20px;
+            line-height: 1.6;
+            color: #334155;
+        }
+        .phishing-red-flag {
+            cursor: pointer;
+            border-bottom: 2px dashed transparent;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .phishing-red-flag:hover {
+            border-color: #f87171; /* red-400 */
+            background-color: #fef2f2; /* red-50 */
+        }
+        .phishing-red-flag.highlighted {
+            border-color: #ef4444; /* red-500 */
+            background-color: #fee2e2; /* red-100 */
+        }
+        .phishing-info-panel {
+            background-color: #fef2f2; /* red-50 */
+            border: 1px solid #fca5a5; /* red-300 */
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+        }
+        .av-sim-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            position: relative;
+            margin: 20px auto;
+            max-width: 400px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .av-computer-icon {
+            font-size: 3rem;
+            color: #475569; /* slate-600 */
+            margin-bottom: 10px;
+        }
+        .av-file-status {
+            font-size: 2rem;
+            transition: color 0.5s ease-in-out;
+        }
+        .av-status-text {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 5px;
+        }
+        .av-scan-progress {
+            width: 0%;
+            height: 8px;
+            background-color: #60a5fa; /* blue-400 */
+            border-radius: 4px;
+            position: absolute;
+            bottom: 10px;
+            left: 10%;
+            right: 10%;
+            transition: width 1s linear;
+            opacity: 0;
+        }
+        .av-scan-progress.active {
+            opacity: 1;
+            width: 80%;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-teal-700 hover:bg-teal-800 transition-colors">HOME</a>
+                <h1 class="text-xl font-bold text-teal-800 ml-2">Internet Security</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Intro</a>
+                <a href="#threats" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Threats</a>
+                <a href="#phishing" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Phishing</a>
+                <a href="#antivirus" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Antivirus</a>
+                <a href="#takeaways" class="nav-link text-stone-600 hover:text-teal-600 font-medium">Tips</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-teal-800 mb-4">ModernWorld Internet Security Basics: Staying Safe Online</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Understanding basic internet security is crucial in today's digital world. Learn about common threats and how to protect your computer and personal information.</p>
+            <span class="text-7xl mt-8 block">🛡️</span>
+        </section>
+
+        <section id="threats" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Viruses and Malware: Digital Threats</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">"Malware" is a broad term for malicious software. Viruses are a specific type of malware. Click to learn more about each.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <div class="toggle-header" data-toggle="virus-content">
+                        <span>What is a Virus?</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="virus-content" class="toggle-content">
+                        <p class="text-stone-700 mb-2">A **computer virus** is a type of malicious software that attaches itself to another program (like a document or application) and, when that program is run, replicates itself by modifying other computer programs and inserting its own code.</p>
+                        <p class="text-stone-700">Viruses often spread from one computer to another through infected files or removable media.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="toggle-header" data-toggle="malware-content">
+                        <span>What is Malware?</span>
+                        <span>▼</span>
+                    </div>
+                    <div id="malware-content" class="toggle-content">
+                        <p class="text-stone-700 mb-2">**Malware** is a general term for any software designed to intentionally cause damage to a computer, server, client, or computer network, or to steal data.</p>
+                        <p class="text-stone-700">Common types include:</p>
+                        <ul class="list-disc list-inside text-stone-700 ml-4">
+                            <li>**Spyware:** Secretly monitors your computer activity.</li>
+                            <li>**Adware:** Displays unwanted advertisements.</li>
+                            <li>**Ransomware:** Encrypts your files and demands payment.</li>
+                            <li>**Worms:** Self-replicating malware that spreads independently across networks.</li>
+                            <li>**Trojans:** Disguises itself as legitimate software to gain access.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="phishing" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Phishing: Tricking You Online</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Phishing is a type of cyberattack that uses deceptive emails, websites, or messages to trick individuals into revealing sensitive information like usernames, passwords, and credit card details. Click on the "red flags" in the simulated email to learn how to spot them.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="phishing-email-sim">
+                    <div class="email-header-line">
+                        <span class="email-label">From:</span>
+                        <span class="email-value phishing-red-flag" data-flag="sender">support@paypal-security.com</span>
+                    </div>
+                    <div class="email-header-line">
+                        <span class="email-label">To:</span>
+                        <span class="email-value">your.email@example.com</span>
+                    </div>
+                    <div class="email-header-line">
+                        <span class="email-label">Subject:</span>
+                        <span class="email-value phishing-red-flag" data-flag="subject">Urgent: Your Account Has Been Limited!</span>
+                    </div>
+                    <div class="email-body-content">
+                        <p>Dear Valued Customer,</p>
+                        <p class="mt-4">We detected unusual activity on your account. For your security, we have temporarily limited access to your services.</p>
+                        <p class="mt-4">To restore full access, please <span class="phishing-red-flag" data-flag="link">verify your account details immediately by clicking here</span>.</p>
+                        <p class="mt-4">Failure to do so will result in permanent account closure within 24 hours.</p>
+                        <p class="mt-4">Thank you for your understanding.</p>
+                        <p class="mt-2">Sincerely,</p>
+                        <p>The PayPal Security Team</p>
+                    </div>
+                </div>
+                <div class="phishing-info-panel" id="phishing-info-panel">
+                    <h4 class="text-xl font-semibold text-red-800 mb-2">Phishing Red Flags Explained:</h4>
+                    <p id="phishing-info-default" class="text-red-700">Click on the highlighted "red flags" in the email to understand common phishing tactics.</p>
+                    <p id="phishing-info-sender" class="text-red-700 hidden">**Suspicious Sender:** The email address looks like a legitimate company, but it's slightly off or from a generic domain. Always check the full email address, not just the display name.</p>
+                    <p id="phishing-info-subject" class="text-red-700 hidden">**Urgent/Threatening Subject:** Phishing emails often create a sense of urgency or fear to pressure you into acting quickly without thinking.</p>
+                    <p id="phishing-info-link" class="text-red-700 hidden">**Suspicious Link:** The text of the link might look legitimate, but the actual URL it points to (which you can see by hovering over it) is different or suspicious. Never click links from unexpected or suspicious emails.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="antivirus" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Antivirus Software: Your Digital Guardian</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Antivirus (AV) software is designed to detect, prevent, and remove malicious software. It acts as a shield for your computer.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="av-sim-container">
+                    <span class="av-computer-icon">💻</span>
+                    <span id="av-file-status" class="av-file-status text-red-500">🦠</span>
+                    <span id="av-status-text" class="av-status-text">File Status: Infected</span>
+                    <div id="av-scan-progress" class="av-scan-progress"></div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <h4 class="text-xl font-semibold text-teal-800 mb-3">How Antivirus Works:</h4>
+                    <ul class="list-disc list-inside text-stone-700 space-y-2">
+                        <li>**Scanning:** Regularly checks your files and programs for known malware signatures.</li>
+                        <li>**Detection:** Identifies suspicious behavior or code patterns.</li>
+                        <li>**Removal/Quarantine:** If malware is found, it attempts to remove it or isolate it in a safe area (quarantine).</li>
+                        <li>**Real-time Protection:** Monitors your computer continuously for new threats.</li>
+                        <li>**Updates:** Needs regular updates to recognize the latest threats.</li>
+                    </ul>
+                    <button id="simulate-av-scan-btn" class="mt-4 bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition">Simulate Antivirus Scan</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="takeaways" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-teal-700">Key Takeaways for Internet Security</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">By following these simple practices, you can significantly improve your online safety.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-3xl mx-auto">
+                <ul class="list-disc list-inside text-stone-700 space-y-4">
+                    <li>
+                        <span class="font-semibold text-teal-800">Use Strong, Unique Passwords:</span> For every online account. Consider a password manager.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Enable Two-Factor Authentication (2FA):</span> Adds an extra layer of security to your accounts.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Keep Software Updated:</span> Operating system, browser, and all applications. Updates often include security patches.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Be Wary of Suspicious Emails/Links:</span> "When in doubt, throw it out!" Verify senders and hover over links.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Install and Update Antivirus Software:</span> A reliable AV program is your first line of defense.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Backup Your Data:</span> Regularly back up important files to an external drive or cloud service.
+                    </li>
+                    <li>
+                        <span class="font-semibold text-teal-800">Use a Firewall:</span> Most operating systems have one built-in; ensure it's active.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Toggle Content Sections (for Viruses & Malware) ---
+            document.querySelectorAll('.toggle-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const targetId = this.dataset.toggle;
+                    const content = document.getElementById(targetId);
+                    const arrow = this.querySelector('span:last-child');
+
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        arrow.textContent = '▼';
+                    } else {
+                        // Close all other active toggles in the same section if desired
+                        // document.querySelectorAll('.toggle-content.active').forEach(item => item.classList.remove('active'));
+                        // document.querySelectorAll('.toggle-header span:last-child').forEach(arr => arr.textContent = '▼');
+
+                        content.classList.add('active');
+                        arrow.textContent = '▲';
+                    }
+                });
+            });
+
+            // --- Phishing Simulation ---
+            const phishingRedFlags = document.querySelectorAll('.phishing-red-flag');
+            const phishingInfoPanel = document.getElementById('phishing-info-panel');
+            const phishingInfoDefault = document.getElementById('phishing-info-default');
+            const phishingInfoSender = document.getElementById('phishing-info-sender');
+            const phishingInfoSubject = document.getElementById('phishing-info-subject');
+            const phishingInfoLink = document.getElementById('phishing-info-link');
+
+            function clearPhishingHighlights() {
+                phishingRedFlags.forEach(flag => flag.classList.remove('highlighted'));
+                phishingInfoSender.classList.add('hidden');
+                phishingInfoSubject.classList.add('hidden');
+                phishingInfoLink.classList.add('hidden');
+                phishingInfoDefault.classList.remove('hidden');
+            }
+
+            phishingRedFlags.forEach(flag => {
+                flag.addEventListener('click', function() {
+                    clearPhishingHighlights();
+                    this.classList.add('highlighted');
+                    phishingInfoDefault.classList.add('hidden'); // Hide default message
+
+                    const flagType = this.dataset.flag;
+                    if (flagType === 'sender') {
+                        phishingInfoSender.classList.remove('hidden');
+                    } else if (flagType === 'subject') {
+                        phishingInfoSubject.classList.remove('hidden');
+                    } else if (flagType === 'link') {
+                        phishingInfoLink.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // --- Antivirus Simulation ---
+            const avFileStatus = document.getElementById('av-file-status');
+            const avStatusText = document.getElementById('av-status-text');
+            const avScanProgress = document.getElementById('av-scan-progress');
+            const simulateAvScanBtn = document.getElementById('simulate-av-scan-btn');
+
+            simulateAvScanBtn.addEventListener('click', () => {
+                // Reset state
+                avFileStatus.textContent = '🦠';
+                avFileStatus.classList.remove('text-green-500');
+                avFileStatus.classList.add('text-red-500');
+                avStatusText.textContent = 'File Status: Infected';
+                avScanProgress.style.width = '0%';
+                avScanProgress.classList.remove('active');
+
+                // Start scan animation
+                setTimeout(() => {
+                    avScanProgress.classList.add('active');
+                    avStatusText.textContent = 'Scanning...';
+                }, 100);
+
+                // Simulate cleaning after 1 second
+                setTimeout(() => {
+                    avFileStatus.textContent = '✅';
+                    avFileStatus.classList.remove('text-red-500');
+                    avFileStatus.classList.add('text-green-500');
+                    avStatusText.textContent = 'File Status: Clean!';
+                    avScanProgress.classList.remove('active'); // Hide progress bar
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+     <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

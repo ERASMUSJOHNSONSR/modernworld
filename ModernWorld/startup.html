@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A task-oriented, single-page layout guiding the user sequentially. It starts with the core tasks (On/Off), moves to alternative options (Sleep, Hibernate, Restart) presented in an interactive tabbed view to prevent information overload, and concludes with an interactive chart for comparison to reinforce learning. This structure is chosen for its clarity and educational flow, making it more intuitive for a beginner than a complex dashboard. -->
+    <!-- Visualization & Content Choices: Startup/Shutdown is presented in clear, icon-driven cards for simplicity. Power alternatives use a tabbed interface (HTML/JS) for focused learning. A dynamic bar chart (Chart.js/Canvas) is used to visually compare power states based on user-selected criteria (speed vs. power use), making abstract concepts tangible and memorable. This avoids static text and engages the user in discovery. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #6b7280;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+        <a href="index.html" class="inline-block mb-4 px-4 py-2 rounded text-base font-semibold text-white bg-amber-600 hover:bg-amber-700 transition-colors">HOME</a>
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-green-600 mb-2">The ModernWorld Way to Power Your PC</h1>
+            <p class="text-lg text-stone-600">An interactive guide to starting, stopping, and everything in-between.</p>
+        </header>
+
+        <main>
+            <section id="on-off" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Essentials: On & Off</h2>
+                    <p class="max-w-3xl mx-auto text-stone-600">These are the two most fundamental procedures. Following the correct shutdown process is crucial for your computer's health and protecting your data.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                        <h3 class="text-2xl font-bold mb-4 text-green-600">Starting Up</h3>
+                        <div class="space-y-4 text-stone-700">
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-4 mt-1">1️⃣</span>
+                                <div>
+                                    <h4 class="font-bold">Press the Power Button</h4>
+                                    <p>Locate the physical power button on your device and press it once.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-4 mt-1">2️⃣</span>
+                                <div>
+                                    <h4 class="font-bold">Wait for Boot-Up</h4>
+                                    <p>The computer will 'boot,' loading its operating system. It's ready when you see the login screen or desktop.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-red-200">
+                        <h3 class="text-2xl font-bold mb-4 text-red-600">Shutting Down (The Right Way)</h3>
+                        <div class="space-y-4 text-stone-700">
+                             <div class="flex items-start">
+                                <span class="text-2xl mr-4 mt-1">💾</span>
+                                <div>
+                                    <h4 class="font-bold">Save Your Work</h4>
+                                    <p>Before anything else, save all your open files and documents to avoid losing progress.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-2xl mr-4 mt-1">🖱️</span>
+                                <div>
+                                    <h4 class="font-bold">Use the OS Menu</h4>
+                                    <p class="mb-2">Do not just press the power button. Use the software command:</p>
+                                    <ul class="list-disc list-inside text-sm">
+                                        <li><strong class="font-semibold">Windows:</strong> Start Menu → Power → Shut Down</li>
+                                        <li><strong class="font-semibold">macOS:</strong> Apple Menu () → Shut Down...</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="alternatives" class="mb-16">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">The Alternatives</h2>
+                    <p class="max-w-3xl mx-auto text-stone-600">Beyond a full shutdown, these options offer convenience for different situations. Click each tab to learn about its purpose, pros, and cons.</p>
+                </div>
+                <div>
+                    <div class="mb-4 border-b border-stone-200">
+                        <nav class="flex -mb-px" aria-label="Tabs">
+                            <button class="tab-btn tab-active text-lg w-1/3 py-4 px-1 text-center border-b-2 font-medium" data-tab="sleep">😴 Sleep</button>
+                            <button class="tab-btn tab-inactive text-lg w-1/3 py-4 px-1 text-center border-b-2 font-medium" data-tab="hibernate">🛌 Hibernate</button>
+                            <button class="tab-btn tab-inactive text-lg w-1/3 py-4 px-1 text-center border-b-2 font-medium" data-tab="restart">🔄 Restart</button>
+                        </nav>
+                    </div>
+                    <div id="tab-content" class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                        <article id="sleep" class="tab-pane">
+                            <h3 class="text-2xl font-bold mb-2">Sleep Mode</h3>
+                            <p class="mb-4 text-stone-600">A low-power state that keeps your session in RAM for a quick resume. Ideal for short breaks.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-green-800">Pros</h4>
+                                    <ul class="list-disc list-inside text-green-700">
+                                        <li>Wakes up almost instantly</li>
+                                        <li>Resume exactly where you left off</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-red-800">Cons</h4>
+                                    <ul class="list-disc list-inside text-red-700">
+                                        <li>Uses a small amount of power</li>
+                                        <li>Session is lost if power is cut</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="hibernate" class="tab-pane hidden">
+                             <h3 class="text-2xl font-bold mb-2">Hibernate Mode</h3>
+                            <p class="mb-4 text-stone-600">Saves your session to the hard drive and powers off completely. Best for long periods away from a power source.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-green-800">Pros</h4>
+                                    <ul class="list-disc list-inside text-green-700">
+                                        <li>Uses zero power</li>
+                                        <li>Your session is safe without power</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-red-800">Cons</h4>
+                                    <ul class="list-disc list-inside text-red-700">
+                                        <li>Slower to resume than sleep</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </article>
+                        <article id="restart" class="tab-pane hidden">
+                             <h3 class="text-2xl font-bold mb-2">Restart (Reboot)</h3>
+                            <p class="mb-4 text-stone-600">Shuts the computer down and immediately starts it again. It's the classic fix for many common problems.</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-blue-800">Why Use It?</h4>
+                                    <ul class="list-disc list-inside text-blue-700">
+                                        <li>Clears temporary memory (RAM)</li>
+                                        <li>Fixes sluggishness or glitches</li>
+                                        <li>Applies system updates</li>
+                                        <li>Fundamental troubleshooting step</li>
+                                    </ul>
+                                </div>
+                                 <div class="bg-stone-100 p-4 rounded-lg">
+                                    <h4 class="font-bold text-stone-800">When to Use It</h4>
+                                    <p class="text-stone-700">Use a restart when your computer is acting strangely, running slow, or after installing new software or updates.</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Visual Comparison</h2>
+                    <p class="max-w-3xl mx-auto text-stone-600">Still not sure which to use? This chart compares the key differences. Click the buttons to change the metric and see how each power state stacks up.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-stone-200">
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button id="compare-speed" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-indigo-700 transition-colors">Compare Startup Speed</button>
+                        <button id="compare-power" class="bg-stone-200 text-stone-700 font-semibold py-2 px-4 rounded-lg hover:bg-stone-300 transition-colors">Compare Power Use</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetPaneId = tab.getAttribute('data-tab');
+
+                    tabs.forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('tab-inactive');
+                    });
+                    tab.classList.add('tab-active');
+                    tab.classList.remove('tab-inactive');
+
+                    panes.forEach(pane => {
+                        if (pane.id === targetPaneId) {
+                            pane.classList.remove('hidden');
+                        } else {
+                            pane.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            let comparisonChart;
+
+            const speedData = {
+                labels: ['Sleep', 'Hibernate', 'Restart / Full Shutdown'],
+                datasets: [{
+                    label: 'Relative Time to Usable Desktop',
+                    data: [5, 30, 100],
+                    backgroundColor: ['#818cf8', '#a78bfa', '#f87171'],
+                    borderColor: ['#4f46e5', '#7c3aed', '#dc2626'],
+                    borderWidth: 1
+                }]
+            };
+
+            const powerData = {
+                labels: ['Sleep', 'Hibernate', 'Restart / Full Shutdown'],
+                datasets: [{
+                    label: 'Relative Power Consumption While Off',
+                    data: [5, 0, 0],
+                    backgroundColor: ['#fbbf24', '#4ade80', '#4ade80'],
+                    borderColor: ['#f59e0b', '#22c55e', '#22c55e'],
+                    borderWidth: 1
+                }]
+            };
+
+            const chartOptions = {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    y: {
+                         grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 14,
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            };
+
+            function createChart(data, title) {
+                if (comparisonChart) {
+                    comparisonChart.destroy();
+                }
+                chartOptions.scales.x.title.text = title;
+                comparisonChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: chartOptions
+                });
+            }
+
+            const speedBtn = document.getElementById('compare-speed');
+            const powerBtn = document.getElementById('compare-power');
+
+            speedBtn.addEventListener('click', () => {
+                createChart(speedData, 'Faster ⬅️ to ➡️ Slower');
+                speedBtn.classList.add('bg-indigo-600', 'text-white');
+                speedBtn.classList.remove('bg-stone-200', 'text-stone-700');
+                powerBtn.classList.add('bg-stone-200', 'text-stone-700');
+                powerBtn.classList.remove('bg-indigo-600', 'text-white');
+            });
+
+            powerBtn.addEventListener('click', () => {
+                createChart(powerData, 'More Power ⬅️ to ➡️ Less Power');
+                powerBtn.classList.add('bg-indigo-600', 'text-white');
+                powerBtn.classList.remove('bg-stone-200', 'text-stone-700');
+                speedBtn.classList.add('bg-stone-200', 'text-stone-700');
+                speedBtn.classList.remove('bg-indigo-600', 'text-white');
+            });
+            
+            speedBtn.click();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MordernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Blue Accent -->
+    <!-- Application Structure Plan: The SPA is structured into three main thematic sections: "Navigating Websites," "Using Search Engines," and "Bookmarks." A sticky header with navigation links allows quick jumps between sections. The "Navigating Websites" section features a simulated browser interface with clickable back/forward buttons and a URL bar that updates a content area. The "Using Search Engines" section includes a simplified search engine interface with dynamic results based on user input. The "Bookmarks" section demonstrates adding and accessing bookmarks through a dynamic list. This linear, scrollable structure with interactive simulations is chosen for its simplicity and logical progression, guiding the user through core browsing actions with direct visual feedback. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Concepts of links, back/forward, and URL bar. -> Goal: Instruct/Demonstrate. -> Viz/Method: A simulated browser interface (HTML/CSS) with clickable elements for back/forward buttons and a URL bar. Clicking these elements will update a content area with simulated page changes (e.g., "Page 1", "Page 2"). -> Interaction: Users click on the simulated browser controls. -> Justification: A direct visual simulation of a browser makes the navigation concepts concrete and interactive. -> Library/Method: Vanilla JS for state management and DOM manipulation.
+        - Report Info: How to use a search engine (typing query, viewing results). -> Goal: Instruct/Demonstrate. -> Viz/Method: A simplified search engine interface (HTML/CSS) with an input field and a results area. Typing in the input will simulate search results appearing. -> Interaction: User types into a simulated search bar, and results appear dynamically. -> Justification: Simulating the search process provides immediate feedback and clarifies the interaction. -> Library/Method: Vanilla JS for input handling and dynamic content.
+        - Report Info: Purpose of bookmarks, how to add/access them. -> Goal: Inform/Instruct. -> Viz/Method: A list of "bookmarked" sites (HTML/CSS) with a simulated "Add Bookmark" button. Clicking the button adds a new simulated bookmark. -> Interaction: User clicks a button to "add" a bookmark, and the list updates. -> Justification: Visually demonstrating the addition of a bookmark reinforces the concept and its utility. -> Library/Method: Vanilla JS for list manipulation.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .browser-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        .browser-toolbar {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #e2e8f0; /* light blue-gray */
+            border-bottom: 1px solid #cbd5e1; /* slate-300 */
+        }
+        .browser-button {
+            background-color: #cbd5e1; /* slate-300 */
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.9rem;
+            color: #475569; /* slate-600 */
+        }
+        .browser-button:hover {
+            background-color: #94a3b8; /* slate-400 */
+        }
+        .browser-url-bar {
+            flex-grow: 1;
+            background-color: #ffffff;
+            border-radius: 4px;
+            padding: 4px 10px;
+            margin: 0 8px;
+            font-size: 0.9rem;
+            color: #334155; /* slate-700 */
+            border: 1px solid #cbd5e1;
+        }
+        .browser-content {
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #f8fafc; /* light blue-gray */
+        }
+        .search-engine-sim {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .search-input-mock {
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 8px 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            color: #334155;
+            text-align: center;
+            outline: none;
+        }
+        .search-results-area {
+            margin-top: 20px;
+            min-height: 150px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px dashed #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .search-result-item {
+            background-color: #e0f2fe; /* blue-50 */
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #1e40af; /* blue-800 */
+            font-weight: 500;
+        }
+        .bookmark-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #e0f2fe; /* blue-50 */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        .bookmark-item:hover {
+            transform: translateX(5px);
+        }
+        .bookmark-icon {
+            font-size: 1.5rem;
+            color: #1d4ed8; /* blue-700 */
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-green-800">Web Browsing Basics</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">HOME</a>
+                <a href="#navigate" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Navigation</a>
+                <a href="#search-engines" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Search Engines</a>
+                <a href="#bookmarks" class="nav-link text-stone-600 hover:text-blue-600 font-medium">Bookmarks</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-green-800 mb-4">ModernWorld First Steps on the Web</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Discover how to navigate websites, find information using search engines, and save your favorite pages for easy access later.</p>
+        </section>
+
+        <section id="navigate" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Navigating Websites</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Moving around the internet is simple once you understand the basic tools: links, browser buttons, and the address bar. Use the simulated browser below to practice!</p>
+            </div>
+            
+            <div class="browser-sim">
+                <div class="browser-toolbar">
+                    <button id="back-button" class="browser-button mr-2">← Back</button>
+                    <button id="forward-button" class="browser-button">Forward →</button>
+                    <div id="browser-url-display" class="browser-url-bar">https://www.example.com/home</div>
+                </div>
+                <div id="browser-content" class="browser-content">
+                    <h4 class="text-2xl font-semibold text-blue-800 mb-4">Welcome to the Home Page!</h4>
+                    <p class="text-stone-700">Click the "Next Page" link below to navigate, or use the browser buttons.</p>
+                    <button id="next-page-link" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Next Page</button>
+                </div>
+            </div>
+            <div class="mt-8 text-center max-w-2xl mx-auto">
+                <h4 class="text-xl font-semibold text-green-700 mb-3">Key Navigation Methods:</h4>
+                <ul class="list-disc list-inside text-stone-700 space-y-2 text-left">
+                    <li>**Links:** Click on highlighted text or images to jump to new pages.</li>
+                    <li>**Back/Forward Buttons:** Use these in your browser to revisit previous pages or move forward to pages you've already seen.</li>
+                    <li>**Address Bar (URL Bar):** Type a website's address (URL) directly into this bar and press Enter to go to that specific page.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="search-engines" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Using Search Engines</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Search engines are powerful tools that help you find information on the vast internet. Just type what you're looking for, and they'll show you relevant results.</p>
+            </div>
+            
+            <div class="search-engine-sim">
+                <input type="text" id="search-input" class="search-input-mock" placeholder="Type your search query here...">
+                <div id="search-results-area" class="search-results-area">
+                    <p class="text-stone-600 text-center">Results will appear here as you type.</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center max-w-2xl mx-auto">
+                <h4 class="text-xl font-semibold text-green-700 mb-3">How Search Engines Work:</h4>
+                <ul class="list-disc list-inside text-stone-700 space-y-2 text-left">
+                    <li>**Query:** You type keywords or a question into the search bar.</li>
+                    <li>**Indexing:** The search engine has already "indexed" billions of web pages, creating a massive database.</li>
+                    <li>**Results:** It quickly finds pages in its index that match your query and presents them as a list of links.</li>
+                    <li>**Click & Explore:** You click on the most relevant link to visit the website.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="bookmarks" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-green-700">Bookmarks: Saving Your Favorites</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Bookmarks (or Favorites) allow you to save the addresses of websites you visit frequently, so you can quickly return to them without typing the URL every time.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px]">
+                    <h4 class="text-xl font-semibold text-green-800 mb-3">Your Saved Websites:</h4>
+                    <div id="bookmarks-list" class="space-y-3">
+                        <div class="bookmark-item">
+                            <span class="bookmark-icon">⭐</span>
+                            <p class="text-stone-700">My Favorite News Site</p>
+                        </div>
+                        <div class="bookmark-item">
+                            <span class="bookmark-icon">⭐</span>
+                            <p class="text-stone-700">Online Shopping</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md min-h-[200px] flex flex-col justify-between">
+                    <h4 class="text-xl font-semibold text-green-800 mb-3">How to Use Bookmarks:</h4>
+                    <ul class="list-disc list-inside text-stone-700 space-y-2">
+                        <li>**Adding:** Look for a star icon (⭐) or a "Bookmark" option in your browser's toolbar or menu. Click it to save the current page.</li>
+                        <li>**Accessing:** Bookmarks are usually found in a "Bookmarks" menu, toolbar, or sidebar within your browser. Click a saved bookmark to instantly go to that page.</li>
+                        <li>**Organization:** You can often create folders within your bookmarks to keep them organized.</li>
+                    </ul>
+                    <button id="add-bookmark-btn" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Add New Bookmark</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Navigation Simulation ---
+            const backButton = document.getElementById('back-button');
+            const forwardButton = document.getElementById('forward-button');
+            const browserUrlDisplay = document.getElementById('browser-url-display');
+            const browserContent = document.getElementById('browser-content');
+            const nextPageLink = document.getElementById('next-page-link');
+
+            const pageHistory = [
+                { url: 'https://www.example.com/home', title: 'Welcome to the Home Page!', text: 'Click the "Next Page" link below to navigate, or use the browser buttons.' },
+                { url: 'https://www.example.com/about', title: 'About Us', text: 'Learn more about our company. Use the browser "Back" button to return to the Home Page.' },
+                { url: 'https://www.example.com/contact', title: 'Contact Us', text: 'Reach out to us! You can use the "Back" button to go to the About page.' }
+            ];
+            let currentPageIndex = 0;
+
+            function updateBrowserDisplay() {
+                const currentPage = pageHistory[currentPageIndex];
+                browserUrlDisplay.textContent = currentPage.url;
+                browserContent.innerHTML = `
+                    <h4 class="text-2xl font-semibold text-green-800 mb-4">${currentPage.title}</h4>
+                    <p class="text-stone-700">${currentPage.text}</p>
+                    ${currentPageIndex < pageHistory.length - 1 ? '<button id="next-page-link" class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">Next Page</button>' : '<p class="mt-4 text-stone-500">End of simulated pages.</p>'}
+                `;
+                // Re-attach event listener for the dynamically created button
+                const newNextPageLink = document.getElementById('next-page-link');
+                if (newNextPageLink) {
+                    newNextPageLink.addEventListener('click', () => {
+                        if (currentPageIndex < pageHistory.length - 1) {
+                            currentPageIndex++;
+                            updateBrowserDisplay();
+                        }
+                    });
+                }
+            }
+
+            backButton.addEventListener('click', () => {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    updateBrowserDisplay();
+                }
+            });
+
+            forwardButton.addEventListener('click', () => {
+                if (currentPageIndex < pageHistory.length - 1) {
+                    currentPageIndex++;
+                    updateBrowserDisplay();
+                }
+            });
+
+            nextPageLink.addEventListener('click', () => {
+                if (currentPageIndex < pageHistory.length - 1) {
+                    currentPageIndex++;
+                    updateBrowserDisplay();
+                }
+            });
+
+            updateBrowserDisplay(); // Initial load
+
+            // --- Search Engine Simulation ---
+            const searchInput = document.getElementById('search-input');
+            const searchResultsArea = document.getElementById('search-results-area');
+
+            const searchResultsData = {
+                "how to": ["How to tie a tie", "How to bake a cake", "How to learn coding"],
+                "internet": ["What is the Internet?", "Internet history", "How the internet works"],
+                "weather": ["Local weather forecast", "Weather in Dubai", "7-day weather outlook"],
+                "default": ["Top 10 tech gadgets", "Latest news headlines", "Online learning platforms"]
+            };
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.toLowerCase();
+                searchResultsArea.innerHTML = '';
+                let results = [];
+
+                if (query.includes("how to")) {
+                    results = searchResultsData["how to"];
+                } else if (query.includes("internet")) {
+                    results = searchResultsData["internet"];
+                } else if (query.includes("weather")) {
+                    results = searchResultsData["weather"];
+                } else if (query.length > 2) { // Show default results for longer queries
+                    results = searchResultsData["default"];
+                } else {
+                    searchResultsArea.innerHTML = '<p class="text-stone-600 text-center">Results will appear here as you type.</p>';
+                    return;
+                }
+
+                if (results.length > 0) {
+                    results.forEach(item => {
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'search-result-item';
+                        resultDiv.textContent = item;
+                        searchResultsArea.appendChild(resultDiv);
+                    });
+                } else {
+                    searchResultsArea.innerHTML = '<p class="text-stone-600 text-center">No results found for your query.</p>';
+                }
+            });
+
+            // --- Bookmarks Simulation ---
+            const addBookmarkBtn = document.getElementById('add-bookmark-btn');
+            const bookmarksList = document.getElementById('bookmarks-list');
+            let bookmarkCount = 2; // Starting with 2 default bookmarks
+
+            addBookmarkBtn.addEventListener('click', () => {
+                bookmarkCount++;
+                const newBookmark = document.createElement('div');
+                newBookmark.className = 'bookmark-item';
+                newBookmark.innerHTML = `
+                    <span class="bookmark-icon">⭐</span>
+                    <p class="text-stone-700">New Bookmark ${bookmarkCount}</p>
+                `;
+                bookmarksList.appendChild(newBookmark);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+       <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

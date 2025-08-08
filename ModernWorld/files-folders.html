@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖥️ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthy Tones with a Pop of Green -->
+    <!-- Application Structure Plan: The SPA is structured with a clear, sequential flow: Introduction, Files, Folders, File Types & Extensions, and a Summary. A sticky navigation bar allows quick jumps between sections. The 'Files' and 'Folders' sections use distinct visual representations and concise definitions to highlight their differences. The 'File Types & Extensions' section employs an interactive dropdown filter, allowing users to explore common file types by category. This structure prioritizes clarity and direct interaction, enabling users to gradually build their understanding of these core computing concepts. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Definitions of files and folders. -> Goal: Inform. -> Viz/Method: Distinct visual icons (unicode characters) and clear text definitions presented side-by-side. -> Interaction: None. -> Justification: Direct visual comparison and concise text are most effective for defining fundamental concepts. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Hierarchical structure of folders. -> Goal: Illustrate organization. -> Viz/Method: A simple nested HTML/CSS diagram representing a file system tree. -> Interaction: None. -> Justification: A visual tree structure is the most intuitive way to show hierarchy. -> Library/Method: HTML/CSS with Tailwind.
+        - Report Info: Various file types and their extensions. -> Goal: Inform/Explore. -> Viz/Method: A filterable list of file types and extensions. Users select a category from a dropdown, and the list dynamically updates. -> Interaction: Dropdown selection filters the displayed list. -> Justification: This interactive element allows users to actively explore a large amount of information by category, making it less overwhelming and more useful than a static table. -> Library/Method: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfbf8; /* Light, warm background */
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .card-hover {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for charts */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 400px; /* Max height */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px; /* Adjust height for larger screens */
+            }
+        }
+         .file-type-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e7e5e4; /* stone-200 */
+        }
+        .file-type-item:last-child {
+            border-bottom: none;
+        }
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+    </style>
+</head>
+<body class="text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-emerald-700 hover:bg-emerald-800 transition-colors">HOME</a>
+                <h1 class="text-xl font-bold text-emerald-800 ml-2">Digital Organization</h1>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Overview</a>
+                <a href="#files" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Files</a>
+                <a href="#folders" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">Folders</a>
+                <a href="#file-types" class="nav-link text-stone-600 hover:text-emerald-600 font-medium">File Types</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-6">
+        
+        <section id="intro" class="text-center py-16">
+            <h2 class="text-4xl font-bold text-emerald-800 mb-4">ModernWorld Files and Folders</h2>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">This guide will help you grasp the fundamental concepts of how information is stored and organized on your computer. Learn the definitions, purposes, and how to identify different types of digital content.</p>
+        </section>
+
+        <section id="files" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">What is a "File"?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A file is the basic unit of storage on a computer. It's a collection of related data or information saved under a single name. Everything you create or interact with on a computer, from documents to photos, is stored as a file.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow card-hover">
+                    <span class="text-6xl mb-4">📄</span>
+                    <h4 class="text-2xl font-semibold text-emerald-800 mb-2">The Digital Document</h4>
+                    <p class="text-stone-700 text-center">A file holds actual data: your essays, pictures, music, videos, or programs. It's the content itself.</p>
+                </div>
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-3">Key Properties of a File:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-stone-700">
+                        <li>**File Name:** Unique identifier.</li>
+                        <li>**File Extension:** Indicates its type (e.g., .docx, .jpg, .mp3).</li>
+                        <li>**Size:** How much storage space it occupies.</li>
+                        <li>**Date/Time:** When it was created or last modified.</li>
+                        <li>**Protection Attributes:** Permissions like read-only, hidden.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="folders" class="py-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">What is a "Folder"?</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">A folder (also known as a directory) is a digital container used to organize and manage files and other folders. They help keep your digital space tidy, much like physical folders in a filing cabinet.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="bg-stone-100 p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold text-emerald-800 mb-3">Purpose of Folders:</h4>
+                    <ul class="list-disc list-inside space-y-2 text-stone-700">
+                        <li>**Organization:** Group related files together.</li>
+                        <li>**Navigation:** Makes it easier to find specific files.</li>
+                        <li>**Hierarchy:** Create a structured system (folders within folders, called subfolders).</li>
+                        <li>**Management:** Simplify moving, copying, or deleting groups of files.</li>
+                    </ul>
+                </div>
+                <div class="flex flex-col items-center p-6 bg-stone-50 rounded-lg shadow card-hover">
+                    <span class="text-6xl mb-4">📁</span>
+                    <h4 class="text-2xl font-semibold text-emerald-800 mb-2">The Digital Container</h4>
+                    <p class="text-stone-700 text-center">Folders hold files and other folders. They don't contain data themselves, but organize where data is stored.</p>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center">
+                <h4 class="text-2xl font-semibold text-emerald-800 mb-6">Folder Hierarchy Example:</h4>
+                <div class="bg-white p-8 rounded-lg shadow-xl max-w-md mx-auto">
+                    <div class="text-left text-lg font-mono text-stone-700">
+                        <p>📁 My Documents</p>
+                        <ul class="ml-6 space-y-1">
+                            <li><p>📁 Projects</p>
+                                <ul class="ml-6 space-y-1">
+                                    <li><p>📁 Report 2024</p>
+                                        <ul class="ml-6 space-y-1">
+                                            <li>📄 draft.docx</li>
+                                            <li>📄 data.xlsx</li>
+                                        </ul>
+                                    </li>
+                                    <li><p>📁 Presentation Ideas</p>
+                                        <ul class="ml-6 space-y-1">
+                                            <li>📄 slides.pptx</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><p>📁 Photos</p>
+                                <ul class="ml-6 space-y-1">
+                                    <li>📄 vacation.jpg</li>
+                                    <li>📄 family.png</li>
+                                </ul>
+                            </li>
+                            <li>📄 resume.pdf</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="file-types" class="py-16 bg-white rounded-2xl shadow-inner">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-emerald-700">File Types and Extensions</h3>
+                <p class="mt-2 text-md text-stone-600 max-w-2xl mx-auto">Every file has a type, which tells your computer what kind of information it contains and which application should open it. The file extension, a short suffix after the file name (e.g., `.txt`, `.jpg`), indicates this type.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:justify-center sm:items-center mb-8 space-y-4 sm:space-y-0 sm:space-x-4">
+                <label for="fileTypeFilter" class="text-lg font-medium text-stone-700">Filter by Type:</label>
+                <select id="fileTypeFilter" class="p-2 border border-stone-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="all">All File Types</option>
+                    <option value="document">Documents</option>
+                    <option value="image">Images</option>
+                    <option value="audio">Audio</option>
+                    <option value="video">Video</option>
+                    <option value="executable">Executables</option>
+                    <option value="archive">Archives</option>
+                    <option value="web">Web Files</option>
+                </select>
+            </div>
+
+            <div id="file-types-list" class="bg-stone-100 rounded-lg shadow max-w-2xl mx-auto overflow-hidden">
+                <!-- File types will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <section id="summary" class="py-16 text-center">
+            <h3 class="text-3xl font-bold text-emerald-700 mb-4">Summary</h3>
+            <p class="text-lg text-stone-600 max-w-3xl mx-auto">Files are the digital content, and folders are the organizational containers. Understanding their roles and how file types work is crucial for efficient computer use and managing your digital life effectively.</p>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileTypeFilter = document.getElementById('fileTypeFilter');
+            const fileTypesList = document.getElementById('file-types-list');
+
+            const fileData = [
+                { type: 'document', icon: '📄', extension: '.docx', description: 'Microsoft Word Document' },
+                { type: 'document', icon: '📄', extension: '.pdf', description: 'Portable Document Format' },
+                { type: 'document', icon: '📄', extension: '.xlsx', description: 'Microsoft Excel Spreadsheet' },
+                { type: 'document', icon: '📄', extension: '.pptx', description: 'Microsoft PowerPoint Presentation' },
+                { type: 'document', icon: '📄', extension: '.txt', description: 'Plain Text File' },
+                { type: 'document', icon: '📄', extension: '.rtf', description: 'Rich Text Format' },
+
+                { type: 'image', icon: '🖼️', extension: '.jpg', description: 'JPEG Image' },
+                { type: 'image', icon: '🖼️', extension: '.png', description: 'Portable Network Graphics' },
+                { type: 'image', icon: '🖼️', extension: '.gif', description: 'Graphics Interchange Format' },
+                { type: 'image', icon: '🖼️', extension: '.bmp', description: 'Bitmap Image' },
+
+                { type: 'audio', icon: '🎵', extension: '.mp3', description: 'MP3 Audio File' },
+                { type: 'audio', icon: '🎵', extension: '.wav', description: 'WAV Audio File' },
+                { type: 'audio', icon: '🎵', extension: '.aac', description: 'Advanced Audio Coding File' },
+
+                { type: 'video', icon: '🎬', extension: '.mp4', description: 'MPEG-4 Video File' },
+                { type: 'video', icon: '�', extension: '.avi', description: 'Audio Video Interleave File' },
+                { type: 'video', icon: '🎬', extension: '.mov', description: 'Apple QuickTime Movie' },
+
+                { type: 'executable', icon: '⚙️', extension: '.exe', description: 'Windows Executable Program' },
+                { type: 'executable', icon: '⚙️', extension: '.dll', description: 'Dynamic Link Library' },
+                { type: 'executable', icon: '⚙️', extension: '.app', description: 'macOS Application Bundle' },
+
+                { type: 'archive', icon: '📦', extension: '.zip', description: 'Zipped Compressed Archive' },
+                { type: 'archive', icon: '📦', extension: '.rar', description: 'WinRAR Compressed Archive' },
+                { type: 'archive', icon: '📦', extension: '.7z', description: '7-Zip Compressed Archive' },
+
+                { type: 'web', icon: '🌐', extension: '.html', description: 'HyperText Markup Language File' },
+                { type: 'web', icon: '🌐', extension: '.css', description: 'Cascading Style Sheet File' },
+                { type: 'web', icon: '🌐', extension: '.js', description: 'JavaScript File' },
+                { type: 'web', icon: '🌐', extension: '.php', description: 'PHP Script File' },
+            ];
+
+            function renderFileTypes(filter) {
+                fileTypesList.innerHTML = '';
+                const filteredData = filter === 'all' ? fileData : fileData.filter(file => file.type === filter);
+
+                filteredData.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'file-type-item';
+                    item.innerHTML = `
+                        <span class="file-icon">${file.icon}</span>
+                        <div>
+                            <span class="font-mono text-emerald-700 font-semibold">${file.extension}</span>
+                            <span class="text-stone-600 ml-2">${file.description}</span>
+                        </div>
+                    `;
+                    fileTypesList.appendChild(item);
+                });
+            }
+
+            fileTypeFilter.addEventListener('change', function () {
+                renderFileTypes(this.value);
+            });
+
+            renderFileTypes('all');
+        });
+    </script>
+</body>
+</html>
+�
+
+
+     <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="main.js">
+        
+    </script>
+</body>
+</html>

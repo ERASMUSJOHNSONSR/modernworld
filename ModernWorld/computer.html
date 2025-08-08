@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModernWorld Online Computer Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Amber Accent -->
+    <!-- Application Structure Plan: A single-page application with top navigation for smooth scrolling. The design transforms the linear presentation into interactive sections: 1) Clickable cards for core concepts (definition, purpose). 2) An interactive gallery of computer types where clicking a card opens a detailed modal view. 3) A dynamic comparison tool allowing users to select and compare two computer types side-by-side. 4) A bar chart to visualize the qualitative power/scale relationships. This structure was chosen to promote active exploration and synthesis of information, which is more engaging and effective for learning than a static document. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Key Characteristics/Purposes -> Goal: Inform/Engage -> Viz/Presentation: Interactive HTML/CSS Cards -> Interaction: Click to expand/reveal details -> Justification: Breaks down text walls, encourages interaction. -> Library/Method: Vanilla JS + Tailwind.
+        - Report Info: Types of Computers -> Goal: Organize/Explore -> Viz/Presentation: Clickable cards in a grid layout launching a modal -> Interaction: Click card to open modal with details -> Justification: Keeps main layout clean, provides focused view for details. -> Library/Method: Vanilla JS + Tailwind.
+        - Report Info: Qualitative descriptions of computer power/size -> Goal: Compare -> Viz/Presentation: Horizontal Bar Chart -> Interaction: Static display for at-a-glance comparison -> Justification: Translates text descriptions into a quantitative, easy-to-compare visual format. -> Library/Method: Chart.js (Canvas).
+        - Report Info: Attributes of all computer types -> Goal: Compare -> Viz/Presentation: Dynamic HTML table populated by dropdowns -> Interaction: User selects two computer types to compare -> Justification: Adds a powerful synthesis tool not present in the original report. -> Library/Method: Vanilla JS + Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 60vh;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-stone-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <span class="text-xl font-bold text-amber-600">Computer Basics</span>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="inline-block px-4 py-2 rounded text-base font-semibold text-white bg-amber-600 hover:bg-amber-700 transition-colors">HOME</a>
+                    <a href="#definition" class="text-stone-600 hover:text-amber-600 transition-colors">Definition</a>
+                    <a href="#purpose" class="text-stone-600 hover:text-amber-600 transition-colors">Purpose</a>
+                    <a href="#types" class="text-stone-600 hover:text-amber-600 transition-colors">Types</a>
+                    <a href="#comparison" class="text-stone-600 hover:text-amber-600 transition-colors">Comparison</a>
+                    <a href="#scale" class="text-stone-600 hover:text-amber-600 transition-colors">Scale</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <section class="text-center my-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-stone-900">Understanding MordernWorld Computers</h1>
+            <p class="mt-4 text-lg text-stone-600 max-w-3xl mx-auto">An interactive guide to the devices that shape our world. Explore what they are, what they do, and the many forms they take.</p>
+        </section>
+
+        <section id="definition" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-stone-900">What is a Computer?</h2>
+            <p class="text-center text-stone-600 mb-8 max-w-4xl mx-auto">A computer is an electronic, programmable device that processes data. It takes in raw data (input), manipulates it according to a set of instructions (programs), and produces meaningful information (output). This section breaks down its core characteristics.</p>
+            <div id="characteristics-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            </div>
+        </section>
+
+        <section id="purpose" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-stone-900">The Purpose of Computers</h2>
+            <p class="text-center text-stone-600 mb-8 max-w-4xl mx-auto">At its heart, a computer's purpose is to automate tasks, process information efficiently, and facilitate communication and creation. Explore the primary roles computers play in our lives.</p>
+            <div id="purposes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </div>
+        </section>
+
+        <section id="types" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-stone-900">Types of Computers</h2>
+            <p class="text-center text-stone-600 mb-8 max-w-4xl mx-auto">Computers come in all shapes and sizes, from personal devices that fit in your pocket to massive systems that power global networks. Click on any card below to learn more about each type.</p>
+            <div id="types-container" class="space-y-8">
+            </div>
+        </section>
+
+        <section id="comparison" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-stone-900">Compare Computer Types</h2>
+            <p class="text-center text-stone-600 mb-8 max-w-4xl mx-auto">Ever wondered how a Laptop stacks up against a Tablet, or a Server against a Mainframe? Select two computer types from the dropdowns below to see a side-by-side comparison of their key attributes.</p>
+            <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200 max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label for="compare1" class="block text-sm font-medium text-stone-700">Select Computer 1</label>
+                        <select id="compare1" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-stone-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md"></select>
+                    </div>
+                    <div>
+                        <label for="compare2" class="block text-sm font-medium text-stone-700">Select Computer 2</label>
+                        <select id="compare2" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-stone-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md"></select>
+                    </div>
+                </div>
+                <div id="comparison-table-container"></div>
+            </div>
+        </section>
+
+        <section id="scale" class="my-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-stone-900">A Matter of Scale</h2>
+            <p class="text-center text-stone-600 mb-8 max-w-4xl mx-auto">This chart visualizes the relative differences in typical processing power and portability across various computer types. It helps to illustrate the vast spectrum from highly portable personal devices to stationary, immensely powerful systems.</p>
+            <div class="chart-container bg-white p-4 rounded-lg shadow-md border border-stone-200">
+                <canvas id="scaleChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+        <footer class="text-center mt-12 py-4 border-t border-gray-200">
+            <p class="text-gray-500 flex flex-col sm:flex-row justify-center items-center gap-2">
+                <span>A ModernWorld Learning Experience.</span>
+                <span class="text-xs text-stone-400 italic">All rights reserved by Dillygraphics</span>
+            </p>
+        </footer>
+    </div>
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
+        <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+            <div class="sticky top-0 bg-white border-b border-stone-200 p-4 flex justify-between items-center">
+                <h3 id="modal-title" class="text-2xl font-bold text-stone-900"></h3>
+                <button id="modal-close-btn" class="text-stone-500 hover:text-stone-800">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <p class="font-semibold text-amber-600">Description</p>
+                    <p id="modal-description" class="text-stone-700"></p>
+                </div>
+                <div class="mb-4">
+                    <p class="font-semibold text-amber-600">Purpose</p>
+                    <p id="modal-purpose" class="text-stone-700"></p>
+                </div>
+                <div id="modal-advantages-container">
+                    <p class="font-semibold text-amber-600">Advantages</p>
+                    <ul id="modal-advantages" class="list-disc list-inside text-stone-700"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const computerData = {
+            characteristics: [
+                { name: 'Electronic', icon: '⚡', description: 'It operates using electrical signals and circuits.' },
+                { name: 'Programmable', icon: '👨‍💻', description: 'It can be instructed to perform specific tasks through software.' },
+                { name: 'Data Processing', icon: '⚙️', description: 'It takes raw data as input, processes it, and produces meaningful information as output.' },
+                { name: 'Storage', icon: '💾', description: 'It can store data and instructions for future use in memory or on storage devices.' },
+                { name: 'Automatic', icon: '🤖', description: 'Once programmed, it can execute tasks without continuous human intervention.' }
+            ],
+            purposes: [
+                { name: 'Information Processing', description: 'Excels at processing vast amounts of data quickly and accurately, including calculations, data analysis, sorting, and searching.' },
+                { name: 'Automation', description: 'Automates repetitive and complex tasks, reducing human effort and errors in manufacturing, administration, and scientific research.' },
+                { name: 'Communication', description: 'Revolutionized communication through email, video conferencing, and social media, connecting people globally.' },
+                { name: 'Storage & Retrieval', description: 'Provides efficient ways to store and retrieve large volumes of information, from personal photos to global databases.' },
+                { name: 'Creation & Design', description: 'Indispensable tools for creating digital content, including documents, graphics, music, videos, software, and 3D models.' },
+                { name: 'Entertainment', description: 'Serves as a primary source of digital entertainment, from video games to streaming movies and music.' },
+                { name: 'Problem Solving', description: 'Used to solve complex problems in science, engineering, and business through simulations, modeling, and data analysis.' }
+            ],
+            types: [
+                {
+                    category: 'Personal Computing',
+                    items: [
+                        { name: 'Desktops', description: 'Consist of a tower (containing the CPU, memory, storage), a separate monitor, keyboard, and mouse. They are typically stationary.', purpose: 'Ideal for tasks requiring more power, larger screens, and customizability, such as gaming, video editing, graphic design, and office work.', advantages: ['More powerful', 'Easier to upgrade', 'Better cooling', 'Cost-effective for performance'], power: 6, portability: 1, use: 'Home/Office' },
+                        { name: 'Laptops', description: 'Portable computers that integrate the monitor, keyboard, touchpad, and speakers into a single, compact unit.', purpose: 'Designed for portability and convenience, allowing users to work or learn on the go. Suitable for general productivity, Browse, and light entertainment.', advantages: ['Portable', 'All-in-one design', 'Built-in battery'], power: 5, portability: 8, use: 'Mobile Work' },
+                        { name: 'Tablets', description: 'Portable computers with a touchscreen interface, larger than a smartphone but smaller than a laptop.', purpose: 'Media consumption (reading, watching videos), light productivity, gaming, and web Browse.', advantages: ['Highly portable', 'Intuitive touch interface', 'Long battery life'], power: 3, portability: 9, use: 'Consumption/Mobile' },
+                        { name: 'Smartphones', description: 'Handheld mobile phones with advanced computing capabilities, internet connectivity, and a touchscreen interface.', purpose: 'Communication (calls, texts, video), internet access, social media, photography, navigation, and a vast array of mobile applications.', advantages: ['Extremely portable', 'Always connected', 'Versatile with apps'], power: 2, portability: 10, use: 'Communication/Apps' },
+                        { name: 'Chromebooks', description: 'Laptops that run on Google\'s Chrome OS, primarily designed for internet-based tasks and cloud computing.', purpose: 'Web Browse, Google Workspace (Docs, Sheets, Slides), streaming, and Android apps. Ideal for students and users who primarily work online.', advantages: ['Fast boot-up', 'Secure OS', 'Good battery life', 'Often affordable'], power: 3, portability: 8, use: 'Web/Cloud' },
+                    ]
+                },
+                {
+                    category: 'Professional & Scientific',
+                    items: [
+                        { name: 'Workstations', description: 'High-performance computers designed for technical or scientific applications, typically more powerful than standard desktop PCs.', purpose: 'Used by engineers, architects, and scientists for tasks requiring intensive computation, such as CAD/CAM, 3D rendering, and data analysis.', advantages: ['High-end performance', 'Optimized for specific tasks', 'Reliable components'], power: 8, portability: 1, use: 'Technical Design' },
+                        { name: 'Servers', description: 'Powerful computers designed to store, process, and manage network data, resources, and services for other computers (clients) on a network.', purpose: 'Host websites, manage databases, store files, run applications, and provide email services. They are the backbone of the internet.', advantages: ['High reliability (24/7 operation)', 'Scalable', 'Manages network traffic'], power: 9, portability: 0, use: 'Network Services' },
+                        { name: 'Mainframes', description: 'Large, powerful, and expensive computers capable of processing enormous amounts of data at very high speeds.', purpose: 'Primarily used by large organizations (banks, airlines) for critical applications requiring high reliability, security, and transaction processing.', advantages: ['Massive transaction throughput', 'Extreme reliability', 'High security'], power: 10, portability: 0, use: 'Large-scale Transactions' },
+                        { name: 'Supercomputers', description: 'The fastest and most powerful computers available, capable of performing billions of calculations per second.', purpose: 'Used for highly complex computational tasks that require immense processing power, such as weather forecasting, climate modeling, and scientific simulations.', advantages: ['Highest possible processing speed', 'Solves massive parallel problems'], power: 11, portability: 0, use: 'Scientific Research' }
+                    ]
+                }
+            ]
+        };
+
+        const characteristicsContainer = document.getElementById('characteristics-container');
+        computerData.characteristics.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-6 rounded-lg shadow-sm border border-stone-200 text-center transition-all duration-300 hover:shadow-md hover:border-amber-400';
+            card.innerHTML = `
+                <div class="text-4xl mb-3">${item.icon}</div>
+                <h3 class="font-bold text-lg text-stone-800">${item.name}</h3>
+                <p class="text-sm text-stone-600 mt-2">${item.description}</p>
+            `;
+            characteristicsContainer.appendChild(card);
+        });
+
+        const purposesContainer = document.getElementById('purposes-container');
+        computerData.purposes.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all duration-300 hover:shadow-md hover:border-amber-400 flex flex-col';
+            card.innerHTML = `
+                <h3 class="font-bold text-lg text-stone-800 mb-2">${item.name}</h3>
+                <p class="text-sm text-stone-600 flex-grow">${item.description}</p>
+            `;
+            purposesContainer.appendChild(card);
+        });
+
+        const typesContainer = document.getElementById('types-container');
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        computerData.types.forEach(category => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.innerHTML = `<h3 class="text-2xl font-semibold mb-4 border-b-2 border-amber-500 pb-2">${category.category}</h3>`;
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+
+            category.items.forEach(item => {
+                const card = document.createElement('button');
+                card.className = 'bg-white p-6 rounded-lg shadow-sm border border-stone-200 text-left transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-500';
+                card.innerHTML = `
+                    <h4 class="font-bold text-xl text-stone-800">${item.name}</h4>
+                    <p class="text-sm text-stone-500 mt-2 line-clamp-3">${item.purpose}</p>
+                `;
+                card.addEventListener('click', () => showModal(item));
+                gridDiv.appendChild(card);
+            });
+
+            categoryDiv.appendChild(gridDiv);
+            typesContainer.appendChild(categoryDiv);
+        });
+
+        const showModal = (item) => {
+            document.getElementById('modal-title').innerText = item.name;
+            document.getElementById('modal-description').innerText = item.description;
+            document.getElementById('modal-purpose').innerText = item.purpose;
+            
+            const advantagesContainer = document.getElementById('modal-advantages-container');
+            const advantagesList = document.getElementById('modal-advantages');
+            if (item.advantages && item.advantages.length > 0) {
+                advantagesList.innerHTML = item.advantages.map(adv => `<li>${adv}</li>`).join('');
+                advantagesContainer.style.display = 'block';
+            } else {
+                advantagesContainer.style.display = 'none';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        };
+
+        const hideModal = () => {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+
+        modalCloseBtn.addEventListener('click', hideModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+        
+        const allComputerTypes = computerData.types.flatMap(c => c.items);
+        const compare1Select = document.getElementById('compare1');
+        const compare2Select = document.getElementById('compare2');
+        const comparisonContainer = document.getElementById('comparison-table-container');
+
+        allComputerTypes.forEach(item => {
+            compare1Select.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+            compare2Select.innerHTML += `<option value="${item.name}">${item.name}</option>`;
+        });
+        compare1Select.value = 'Laptops';
+        compare2Select.value = 'Tablets';
+
+        const updateComparison = () => {
+            const item1 = allComputerTypes.find(i => i.name === compare1Select.value);
+            const item2 = allComputerTypes.find(i => i.name === compare2Select.value);
+
+            if (!item1 || !item2) return;
+            
+            comparisonContainer.innerHTML = `
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-stone-500">
+                        <thead class="text-xs text-stone-700 uppercase bg-stone-100">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 rounded-l-lg">Attribute</th>
+                                <th scope="col" class="px-6 py-3">${item1.name}</th>
+                                <th scope="col" class="px-6 py-3 rounded-r-lg">${item2.name}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b"><th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">Primary Use</th><td class="px-6 py-4">${item1.use}</td><td class="px-6 py-4">${item2.use}</td></tr>
+                            <tr class="bg-white border-b"><th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">Relative Power</th><td class="px-6 py-4">${item1.power}/11</td><td class="px-6 py-4">${item2.power}/11</td></tr>
+                            <tr class="bg-white border-b"><th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">Portability</th><td class="px-6 py-4">${item1.portability}/10</td><td class="px-6 py-4">${item2.portability}/10</td></tr>
+                            <tr class="bg-white"><th scope="row" class="px-6 py-4 font-medium text-stone-900 whitespace-nowrap">Description</th><td class="px-6 py-4">${item1.description}</td><td class="px-6 py-4">${item2.description}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        compare1Select.addEventListener('change', updateComparison);
+        compare2Select.addEventListener('change', updateComparison);
+        updateComparison();
+
+
+        const scaleCtx = document.getElementById('scaleChart').getContext('2d');
+        new Chart(scaleCtx, {
+            type: 'bar',
+            data: {
+                labels: allComputerTypes.map(i => i.name),
+                datasets: [
+                    {
+                        label: 'Relative Power',
+                        data: allComputerTypes.map(i => i.power),
+                        backgroundColor: 'rgba(245, 158, 11, 0.7)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Relative Portability',
+                        data: allComputerTypes.map(i => i.portability),
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: false,
+                        ticks: {
+                            callback: function(value) {
+                                if (value === 0) return 'Low';
+                                if (value === 5) return 'Medium';
+                                if (value === 10) return 'High';
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: false,
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                         callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null) {
+                                    label += context.parsed.x;
+                                    if (context.dataset.label === 'Relative Power') {
+                                        label += '/11';
+                                    } else {
+                                        label += '/10';
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    });
+    </script>
+</body>
+</html>
